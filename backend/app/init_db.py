@@ -1,6 +1,8 @@
 import logging
 from sqlalchemy import text
+from sqlalchemy.orm import Session
 from app.database import engine, Base
+
 from app.models import *  # noqa: F401, F403
 import geoalchemy2.admin.dialects.sqlite
 
@@ -25,6 +27,11 @@ def init_db():
         # Create all tables defined in models
         Base.metadata.create_all(bind=engine)
         logger.info("Database schema initialized successfully.")
+
+        # Seed initial crop master
+        from app.seed_crops import seed_crops
+        with Session(engine) as session:
+            seed_crops(session)
     except Exception as e:
         logger.error(f"Error initializing database: {e}")
         raise e
@@ -32,3 +39,4 @@ def init_db():
 
 if __name__ == "__main__":
     init_db()
+

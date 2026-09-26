@@ -2,9 +2,10 @@ import React from 'react';
 import { PageHeader } from '../components/common/PageHeader';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { MapPin, PlusCircle, Sprout, Calendar, Layers, ChevronRight, Loader2, AlertCircle } from 'lucide-react';
+import { MapPin, PlusCircle, Sprout, Layers, ChevronRight, Loader2, AlertCircle } from 'lucide-react';
 import { apiClient } from '../services/api';
-import { FarmDetailData } from './FarmDetail';
+import type { FarmDetailData } from './FarmDetail';
+
 
 export const FarmsList: React.FC = () => {
   const { data: farms = [], isLoading, isError, error } = useQuery<FarmDetailData[]>({

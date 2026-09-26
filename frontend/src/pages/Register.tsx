@@ -5,15 +5,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Sprout, User, Mail, Lock, Phone, Globe, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
 import { apiClient } from '../services/api';
-import { useAuth, UserProfile } from '../context/AuthContext';
+import { useAuth, type UserProfile } from '../context/AuthContext';
 
 const registerSchema = z.object({
   full_name: z.string().min(2, 'Full name must be at least 2 characters'),
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   phone: z.string().optional(),
-  preferred_language: z.enum(['EN', 'TA']).default('EN'),
+  preferred_language: z.enum(['EN', 'TA']),
 });
+
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 

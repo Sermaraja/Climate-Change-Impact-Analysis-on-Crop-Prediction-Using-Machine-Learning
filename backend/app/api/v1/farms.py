@@ -120,3 +120,166 @@ def delete_farm(
     db.delete(farm)
     db.commit()
     return None
+
+
+# --- Farm Crop Endpoints (Stage 5) ---
+from app.models.crop import Crop, CropVariety, FarmCrop
+from app.schemas.crop import FarmCropCreate, FarmCropUpdate, FarmCropResponse
+from app.services.crop_service import farm_crop_to_response
+
+
+@router.post("/{farm_id}/crop", response_model=FarmCropResponse, status_code=status.HTTP_201_CREATED)
+def assign_crop_to_farm(
+    farm_id: int,
+    payload: FarmCropCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    farm = db.query(Farm).filter(Farm.id == farm_id, Farm.user_id == current_user.id).first()
+    if not farm:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Farm not found or access denied."
+        )
+
+    crop = db.query(Crop).filter(Crop.id == payload.crop_id).first()
+    if not crop:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Crop ID {payload.crop_id} does not exist in master catalog."
+        )
+
+    if payload.variety_id:
+        variety = db.query(CropVariety).filter(
+            CropVariety.id == payload.variety_id,
+            CropVariety.crop_id == payload.crop_id
+        ).first()
+        if not variety:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Variety ID {payload.variety_id} is invalid for crop '{crop.name}'."
+            )
+
+    # Deactivate existing active crops for this farm
+    existing_crops = db.query(FarmCrop).filter(
+        FarmCrop.farm_id == farm_id,
+        FarmCrop.is_active == True
+    ).all()
+    for ex_crop in existing_crops:
+        ex_crop.is_active = False
+
+    farm_crop = FarmCrop(
+        farm_id=farm_id,
+        crop_id=payload.crop_id,
+        variety_id=payload.variety_id,
+        planting_date=payload.planting_date,
+        season=payload.season,
+        user_stage_override=payload.user_stage_override,
+        status="ACTIVE",
+        is_active=True,
+    )
+
+    db.add(farm_crop)
+    db.commit()
+    db.refresh(farm_crop)
+
+    return farm_crop_to_response(db, farm_crop)
+
+
+@router.get("/{farm_id}/crop", response_model=FarmCropResponse)
+def get_farm_crop(
+    farm_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    farm = db.query(Farm).filter(Farm.id == farm_id, Farm.user_id == current_user.id).first()
+    if not farm:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Farm not found or access denied."
+        )
+
+    farm_crop = (
+        db.query(FarmCrop)
+        .filter(FarmCrop.farm_id == farm_id, FarmCrop.is_active == True)
+        .order_by(FarmCrop.created_at.desc())
+        .first()
+    )
+
+    if not farm_crop:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No active crop registered for this farm."
+        )
+
+    return farm_crop_to_response(db, farm_crop)
+
+
+@router.put("/{farm_id}/crop", response_model=FarmCropResponse)
+def update_farm_crop(
+    farm_id: int,
+    payload: FarmCropUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    farm = db.query(Farm).filter(Farm.id == farm_id, Farm.user_id == current_user.id).first()
+    if not farm:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Farm not found or access denied."
+        )
+
+    farm_crop = (
+        db.query(FarmCrop)
+        .filter(FarmCrop.farm_id == farm_id, FarmCrop.is_active == True)
+        .order_by(FarmCrop.created_at.desc())
+        .first()
+    )
+
+    if not farm_crop:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No active crop to update for this farm."
+        )
+
+    if payload.crop_id is not None:
+        crop = db.query(Crop).filter(Crop.id == payload.crop_id).first()
+        if not crop:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Crop ID {payload.crop_id} does not exist in master catalog."
+            )
+        farm_crop.crop_id = payload.crop_id
+
+    if payload.variety_id is not None:
+        if payload.variety_id != 0:
+            variety = db.query(CropVariety).filter(
+                CropVariety.id == payload.variety_id,
+                CropVariety.crop_id == farm_crop.crop_id
+            ).first()
+            if not variety:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Variety ID {payload.variety_id} is invalid for crop ID {farm_crop.crop_id}."
+                )
+            farm_crop.variety_id = payload.variety_id
+        else:
+            farm_crop.variety_id = None
+
+    if payload.planting_date is not None:
+        farm_crop.planting_date = payload.planting_date
+
+    if payload.season is not None:
+        farm_crop.season = payload.season
+
+    if payload.status is not None:
+        farm_crop.status = payload.status
+
+    if payload.user_stage_override is not None:
+        farm_crop.user_stage_override = payload.user_stage_override if payload.user_stage_override.strip() != "" else None
+
+    db.commit()
+    db.refresh(farm_crop)
+
+    return farm_crop_to_response(db, farm_crop)
+

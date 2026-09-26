@@ -3,8 +3,10 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { MapContainer, TileLayer, Polygon, Marker, Popup } from 'react-leaflet';
 import { PageHeader } from '../components/common/PageHeader';
-import { MapPin, Layers, Sprout, Trash2, ArrowLeft, Loader2, AlertCircle, ShieldAlert } from 'lucide-react';
+import { MapPin, Sprout, Trash2, ArrowLeft, Loader2, AlertCircle, ShieldAlert } from 'lucide-react';
 import { apiClient } from '../services/api';
+import type { FarmCropData } from '../types/crop';
+import { CropCard } from '../components/crops/CropCard';
 
 export interface FarmDetailData {
   id: number;
@@ -27,7 +29,10 @@ export const FarmDetail: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { data: farm, isLoading, isError, error } = useQuery<FarmDetailData>({
+  const farmId = Number(id);
+
+  // 1. Fetch Farm GIS metadata
+  const { data: farm, isLoading: isLoadingFarm, isError: isErrorFarm, error: farmError } = useQuery<FarmDetailData>({
     queryKey: ['farm', id],
     queryFn: async () => {
       const response = await apiClient.get<FarmDetailData>(`/farms/${id}`);
@@ -35,6 +40,24 @@ export const FarmDetail: React.FC = () => {
     },
     enabled: !!id,
   });
+
+  // 2. Fetch Active Crop Profile for Farm
+  const { data: farmCrop, refetch: refetchCrop } = useQuery<FarmCropData | null>({
+    queryKey: ['farmCrop', id],
+    queryFn: async () => {
+      try {
+        const response = await apiClient.get<FarmCropData>(`/farms/${id}/crop`);
+        return response.data;
+      } catch (err: any) {
+        if (err?.response?.status === 404) {
+          return null;
+        }
+        throw err;
+      }
+    },
+    enabled: !!id,
+  });
+
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
@@ -52,7 +75,7 @@ export const FarmDetail: React.FC = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoadingFarm) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center text-slate-100">
         <Loader2 className="w-8 h-8 text-crop-400 animate-spin mb-2" />
@@ -61,13 +84,13 @@ export const FarmDetail: React.FC = () => {
     );
   }
 
-  if (isError || !farm) {
+  if (isErrorFarm || !farm) {
     return (
       <div className="glass-card p-6 rounded-2xl border border-slate-800 text-center space-y-3">
         <AlertCircle className="w-8 h-8 text-rose-400 mx-auto" />
         <h2 className="text-base font-bold text-white">Farm Not Found</h2>
         <p className="text-xs text-slate-400">
-          {(error as any)?.response?.data?.detail || 'Farm does not exist or you do not have permission to view it.'}
+          {(farmError as any)?.response?.data?.detail || 'Farm does not exist or you do not have permission to view it.'}
         </p>
         <Link to="/farms" className="inline-flex items-center gap-2 text-xs font-semibold text-crop-400 hover:underline">
           <ArrowLeft className="w-4 h-4" /> Return to My Farms
@@ -86,7 +109,7 @@ export const FarmDetail: React.FC = () => {
   const center: [number, number] = [farm.latitude, farm.longitude];
 
   return (
-    <div>
+    <div className="space-y-6">
       <PageHeader
         title={farm.farm_name}
         subtitle={`${farm.district || ''}, ${farm.state || ''} (${farm.latitude}° N, ${farm.longitude}° E)`}
@@ -111,6 +134,9 @@ export const FarmDetail: React.FC = () => {
           </div>
         }
       />
+
+      {/* Stage 5: Crop Profile & Growth Stage Section */}
+      <CropCard farmId={farmId} crop={farmCrop || null} onRefresh={refetchCrop} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Farm Metadata Card */}

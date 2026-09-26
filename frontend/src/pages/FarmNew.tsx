@@ -13,8 +13,9 @@ const farmSchema = z.object({
   state: z.string().optional(),
   district: z.string().optional(),
   village: z.string().optional(),
-  drainage_class: z.enum(['GOOD', 'MODERATE', 'POOR']).default('MODERATE'),
+  drainage_class: z.enum(['GOOD', 'MODERATE', 'POOR']),
 });
+
 
 type FarmFormValues = z.infer<typeof farmSchema>;
 

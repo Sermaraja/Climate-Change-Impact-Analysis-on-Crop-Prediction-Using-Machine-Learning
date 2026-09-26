@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Polygon, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import { MapPin, Navigation, Trash2, Undo2, Layers, CheckCircle2 } from 'lucide-react';
+import { Navigation, Trash2, Undo2, Layers, CheckCircle2 } from 'lucide-react';
+
 
 // Fix Leaflet default marker icon paths in Vite
 delete (L.Icon.Default.prototype as any)._getIconUrl;

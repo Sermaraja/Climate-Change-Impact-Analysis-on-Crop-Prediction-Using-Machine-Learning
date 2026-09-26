@@ -63,7 +63,9 @@ class FarmCrop(Base):
     planting_date = Column(Date, nullable=False)
     estimated_age_days = Column(Integer, nullable=True)
     current_growth_stage_id = Column(Integer, ForeignKey("crop_growth_stages.id", ondelete="SET NULL"), nullable=True)
-    user_stage_override = Column(String(100), nullable=True)
+    user_stage_override = Column(String(100), nullable=True)  # Confirmed growth stage
+    season = Column(String(50), nullable=True)
+    status = Column(String(50), default="ACTIVE", nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=True)

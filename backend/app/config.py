@@ -7,10 +7,10 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api"
 
-    # Database
+    # Database (uses postgresql+psycopg2:// or sqlite:///./climate_crop_test.db for local testing if pg is offline)
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL",
-        "postgresql://postgres:postgres@localhost:5432/climate_crop_db"
+        "sqlite:///./climate_crop.db"
     )
 
     # CORS

@@ -1,7 +1,8 @@
 import logging
-from sqlalchemy import text, event
+from sqlalchemy import text
 from app.database import engine, Base
 from app.models import *  # noqa: F401, F403
+import geoalchemy2.admin.dialects.sqlite
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("init_db")
@@ -17,13 +18,9 @@ def init_db():
                 conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
                 conn.commit()
 
-        # If running on SQLite fallback for testing, remove GeoAlchemy2 after_create DDL listener
+        # If running on SQLite fallback for testing, disable GeoAlchemy2 SpatiaLite DDL hook
         if engine.dialect.name == "sqlite":
-            try:
-                from geoalchemy2.admin import after_create
-                event.remove(Base.metadata, "after_create", after_create)
-            except Exception:
-                pass
+            geoalchemy2.admin.dialects.sqlite.after_create = lambda table, bind, **kw: None
 
         # Create all tables defined in models
         Base.metadata.create_all(bind=engine)

@@ -12,7 +12,7 @@ class Farm(Base):
     farm_name = Column(String(255), nullable=False)
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
-    boundary = Column(Geometry(geometry_type="POLYGON", srid=4326, use_typmod=True), nullable=True)
+    boundary = Column(Geometry(geometry_type="POLYGON", srid=4326, spatial_index=False), nullable=True)
     area_acres = Column(Float, nullable=False)
     state = Column(String(100), nullable=True)
     district = Column(String(100), nullable=True)

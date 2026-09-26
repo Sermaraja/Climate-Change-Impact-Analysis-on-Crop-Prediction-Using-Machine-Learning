@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, Globe, Bell, CloudLightning, User, Wifi, WifiOff } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, Globe, Bell, CloudLightning, User, LogOut, Wifi, WifiOff } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchHealthStatus } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 interface NavbarProps {
   onMenuClick: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
-  const [lang, setLang] = useState<'EN' | 'TA'>('EN');
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [lang, setLang] = useState<'EN' | 'TA'>(() => (user?.preferred_language === 'TA' ? 'TA' : 'EN'));
 
   const { data: healthData, isError } = useQuery({
     queryKey: ['backendHealth'],
@@ -17,6 +20,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
     refetchInterval: 15000,
     retry: 2,
   });
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <header className="sticky top-0 z-30 h-16 glass-panel border-b border-slate-800/60 px-4 lg:px-8 flex items-center justify-between">
@@ -83,13 +91,29 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
 
         {/* Account menu */}
         <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
-          <Link
-            to="/login"
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-crop-600/20 hover:bg-crop-600/30 border border-crop-500/30 text-crop-300 hover:text-white text-xs font-medium transition-all"
-          >
-            <User className="w-3.5 h-3.5" />
-            <span>Login / Register</span>
-          </Link>
+          {user ? (
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/90 border border-slate-800 text-xs text-white">
+                <User className="w-3.5 h-3.5 text-crop-400" />
+                <span className="font-medium max-w-[120px] truncate">{user.full_name}</span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-medium transition-colors"
+                title="Logout"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-crop-600/20 hover:bg-crop-600/30 border border-crop-500/30 text-crop-300 hover:text-white text-xs font-medium transition-all"
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>Login / Register</span>
+            </Link>
+          )}
         </div>
       </div>
     </header>

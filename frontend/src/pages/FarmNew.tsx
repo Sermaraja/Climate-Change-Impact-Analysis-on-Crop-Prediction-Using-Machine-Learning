@@ -1,161 +1,197 @@
 import React, { useState } from 'react';
 import { PageHeader } from '../components/common/PageHeader';
-import { MapContainer, TileLayer, Marker, Popup, Polygon } from 'react-leaflet';
-import { MapPin, Search, Sprout, Save, Info } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { MapPin, Sprout, Save, Info, AlertCircle, Loader2 } from 'lucide-react';
+import { FarmMapDrawer } from '../components/gis/FarmMapDrawer';
+import { apiClient } from '../services/api';
+
+const farmSchema = z.object({
+  farm_name: z.string().min(2, 'Farm name must be at least 2 characters'),
+  state: z.string().optional(),
+  district: z.string().optional(),
+  village: z.string().optional(),
+  drainage_class: z.enum(['GOOD', 'MODERATE', 'POOR']).default('MODERATE'),
+});
+
+type FarmFormValues = z.infer<typeof farmSchema>;
 
 export const FarmNew: React.FC = () => {
-  const [soilSource, setSoilSource] = useState<'LAB_VERIFIED' | 'FARMER_VERIFIED' | 'ESTIMATED'>('FARMER_VERIFIED');
+  const navigate = useNavigate();
+  const [boundaryData, setBoundaryData] = useState<{
+    boundaryGeoJSON: any | null;
+    latitude: number;
+    longitude: number;
+    areaAcres: number;
+    areaHectares: number;
+  }>({
+    boundaryGeoJSON: null,
+    latitude: 10.7870,
+    longitude: 79.1378,
+    areaAcres: 0,
+    areaHectares: 0,
+  });
 
-  // Thanjavur, Tamil Nadu default center
-  const center: [number, number] = [10.7870, 79.1378];
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const samplePolygon: [number, number][] = [
-    [10.7880, 79.1368],
-    [10.7890, 79.1390],
-    [10.7860, 79.1395],
-    [10.7855, 79.1370],
-  ];
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FarmFormValues>({
+    resolver: zodResolver(farmSchema),
+    defaultValues: {
+      state: 'Tamil Nadu',
+      district: 'Thanjavur',
+      drainage_class: 'MODERATE',
+    },
+  });
+
+  const onSubmit = async (values: FarmFormValues) => {
+    setServerError(null);
+
+    if (!boundaryData.boundaryGeoJSON || boundaryData.areaAcres <= 0) {
+      setServerError('Please draw a valid 3+ vertex polygon boundary on the map before saving.');
+      return;
+    }
+
+    try {
+      const payload = {
+        farm_name: values.farm_name,
+        latitude: boundaryData.latitude,
+        longitude: boundaryData.longitude,
+        boundary_geojson: boundaryData.boundaryGeoJSON,
+        area_acres: boundaryData.areaAcres,
+        state: values.state,
+        district: values.district,
+        village: values.village,
+        drainage_class: values.drainage_class,
+      };
+
+      const response = await apiClient.post('/farms', payload);
+      navigate(`/farms/${response.data.id}`);
+    } catch (err: any) {
+      const msg = err.response?.data?.detail || 'Failed to save farm polygon to database.';
+      setServerError(msg);
+    }
+  };
 
   return (
     <div>
       <PageHeader
         title="Add Farm Boundary & Crop Profile"
-        subtitle="Search location, draw polygon boundary, set crop stage, and specify verified soil type"
+        subtitle="Draw interactive polygon boundary, compute area in acres/ha, and specify drainage profile"
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Form Panel */}
-        <div className="lg:col-span-1 glass-card p-6 rounded-2xl border border-slate-800 space-y-4">
-          <h2 className="text-sm font-bold text-white flex items-center gap-2">
-            <Sprout className="w-4 h-4 text-crop-400" /> Farm Metadata Setup
-          </h2>
+      {serverError && (
+        <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+          <span>{serverError}</span>
+        </div>
+      )}
 
-          <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">Farm Name</label>
-            <input
-              type="text"
-              placeholder="e.g. Delta Paddy Plot A"
-              className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-crop-500"
-            />
-          </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Metadata Form Panel */}
+          <div className="lg:col-span-1 glass-card p-6 rounded-2xl border border-slate-800 space-y-4">
+            <h2 className="text-sm font-bold text-white flex items-center gap-2">
+              <Sprout className="w-4 h-4 text-crop-400" /> Farm Attributes
+            </h2>
 
-          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Crop Type</label>
-              <select className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-crop-500">
-                <option value="paddy">Paddy / Rice</option>
-                <option value="maize">Maize / Corn</option>
-                <option value="cotton">Cotton</option>
-                <option value="sugarcane">Sugarcane</option>
-                <option value="pulses">Black Gram / Pulses</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Crop Variety</label>
+              <label className="block text-xs font-medium text-slate-300 mb-1">Farm Name *</label>
               <input
+                {...register('farm_name')}
                 type="text"
-                placeholder="e.g. CR1009 / Samba"
+                placeholder="e.g. Cauvery Delta Plot A"
                 className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-crop-500"
               />
+              {errors.farm_name && (
+                <p className="text-[11px] text-rose-400 mt-1">{errors.farm_name.message}</p>
+              )}
             </div>
-          </div>
 
-          <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-slate-300 mb-1">State</label>
+                <input
+                  {...register('state')}
+                  type="text"
+                  placeholder="Tamil Nadu"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-crop-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-300 mb-1">District</label>
+                <input
+                  {...register('district')}
+                  type="text"
+                  placeholder="Thanjavur"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-crop-500"
+                />
+              </div>
+            </div>
+
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Planting Date</label>
+              <label className="block text-xs font-medium text-slate-300 mb-1">Village / Town</label>
               <input
-                type="date"
-                defaultValue="2026-08-15"
+                {...register('village')}
+                type="text"
+                placeholder="Vadapathi Village"
                 className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-crop-500"
               />
             </div>
+
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Estimated Growth Stage</label>
-              <select className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-crop-500">
-                <option value="germination">Germination / Seedling</option>
-                <option value="vegetative">Vegetative Growth</option>
-                <option value="flowering">Flowering / Reproductive</option>
-                <option value="ripening">Grain Filling / Maturity</option>
+              <label className="block text-xs font-medium text-slate-300 mb-1">Soil Drainage Quality *</label>
+              <select
+                {...register('drainage_class')}
+                className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-crop-500"
+              >
+                <option value="GOOD">GOOD (Well Drained / Sandy Loam)</option>
+                <option value="MODERATE">MODERATE (Moderate Drainage / Clay Loam)</option>
+                <option value="POOR">POOR (Poor Drainage / Waterlogging Prone)</option>
               </select>
             </div>
-          </div>
 
-          <div className="pt-2 border-t border-slate-800">
-            <label className="block text-xs font-medium text-slate-300 mb-1">Soil Source Integrity</label>
-            <div className="grid grid-cols-3 gap-2">
-              {(['LAB_VERIFIED', 'FARMER_VERIFIED', 'ESTIMATED'] as const).map((source) => (
-                <button
-                  key={source}
-                  type="button"
-                  onClick={() => setSoilSource(source)}
-                  className={`py-1.5 px-2 rounded-lg text-[10px] font-bold border transition-colors ${
-                    soilSource === source
-                      ? 'bg-crop-500/20 text-crop-300 border-crop-500/40'
-                      : 'bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-850'
-                  }`}
-                >
-                  {source.replace('_', ' ')}
-                </button>
-              ))}
+            <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-start gap-2 text-[11px] text-slate-400">
+              <Info className="w-4 h-4 text-crop-400 shrink-0 mt-0.5" />
+              <span>
+                Boundary polygon geometries are stored natively in PostGIS spatial tables for automated weather overlay analytics.
+              </span>
             </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-crop-600 to-crop-500 hover:from-crop-500 hover:to-crop-400 text-white font-medium text-xs flex items-center justify-center gap-2 shadow-lg shadow-crop-500/20 transition-all disabled:opacity-50"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Saving to PostGIS Database...</span>
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  <span>Save Farm Boundary to Database</span>
+                </>
+              )}
+            </button>
           </div>
 
-          <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-start gap-2 text-[11px] text-slate-400">
-            <Info className="w-4 h-4 text-crop-400 shrink-0 mt-0.5" />
-            <span>
-              Verified soil sources take priority over automated regional estimates in ML calculations.
-            </span>
-          </div>
+          {/* Interactive Map Panel */}
+          <div className="lg:col-span-2 glass-card p-6 rounded-2xl border border-slate-800">
+            <h2 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-crop-400" /> Interactive OpenStreetMap Boundary Polygon Drawer
+            </h2>
 
-          <button
-            type="button"
-            className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-crop-600 to-crop-500 hover:from-crop-500 hover:to-crop-400 text-white font-medium text-xs flex items-center justify-center gap-2 shadow-lg shadow-crop-500/20 transition-all"
-          >
-            <Save className="w-4 h-4" />
-            <span>Save Farm Boundary Polygon</span>
-          </button>
-        </div>
-
-        {/* Map Panel */}
-        <div className="lg:col-span-2 glass-card p-4 rounded-2xl border border-slate-800 flex flex-col">
-          <div className="flex items-center justify-between mb-3 px-2">
-            <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-crop-400" />
-              <span className="text-xs font-bold text-white">Interactive OpenStreetMap Farm Boundary</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                placeholder="Search district or town..."
-                className="px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-crop-500"
-              />
-              <button className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">
-                <Search className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
-          <div className="w-full h-[450px] rounded-xl overflow-hidden border border-slate-800 relative z-0">
-            <MapContainer center={center} zoom={13} scrollWheelZoom={false} style={{ height: '100%', width: '100%' }}>
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <Marker position={center}>
-                <Popup>
-                  Thanjavur Farm Location <br /> 10.7870° N, 79.1378° E
-                </Popup>
-              </Marker>
-              <Polygon positions={samplePolygon} pathOptions={{ color: '#22c55e', fillColor: '#22c55e', fillOpacity: 0.35 }} />
-            </MapContainer>
-          </div>
-
-          <div className="mt-3 flex items-center justify-between text-xs text-slate-400 px-2">
-            <span>Approximate Calculated Area: <strong className="text-crop-400">4.25 Acres (1.72 Ha)</strong></span>
-            <span className="text-[11px]">Leaflet + OpenStreetMap Map Engine</span>
+            <FarmMapDrawer onBoundaryChange={setBoundaryData} />
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 };

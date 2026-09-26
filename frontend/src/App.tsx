@@ -1,12 +1,15 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from './context/AuthContext';
+import { ProtectedRoute } from './components/common/ProtectedRoute';
 import { Layout } from './components/layout/Layout';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
 import { FarmsList } from './pages/FarmsList';
 import { FarmNew } from './pages/FarmNew';
+import { FarmDetail } from './pages/FarmDetail';
 import { Weather } from './pages/Weather';
 import { RainImpact } from './pages/RainImpact';
 import { Recovery } from './pages/Recovery';
@@ -27,26 +30,109 @@ const queryClient = new QueryClient({
 export const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="farms" element={<FarmsList />} />
-            <Route path="farms/new" element={<FarmNew />} />
-            <Route path="weather" element={<Weather />} />
-            <Route path="rain-impact" element={<RainImpact />} />
-            <Route path="recovery" element={<Recovery />} />
-            <Route path="climate-analysis" element={<ClimateAnalysis />} />
-            <Route path="history" element={<History />} />
-            <Route path="reports" element={<Reports />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="login" element={<Login />} />
+              <Route path="register" element={<Register />} />
+              
+              {/* Protected Routes */}
+              <Route
+                path="dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="farms"
+                element={
+                  <ProtectedRoute>
+                    <FarmsList />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="farms/new"
+                element={
+                  <ProtectedRoute>
+                    <FarmNew />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="farms/:id"
+                element={
+                  <ProtectedRoute>
+                    <FarmDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="weather"
+                element={
+                  <ProtectedRoute>
+                    <Weather />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="rain-impact"
+                element={
+                  <ProtectedRoute>
+                    <RainImpact />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="recovery"
+                element={
+                  <ProtectedRoute>
+                    <Recovery />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="climate-analysis"
+                element={
+                  <ProtectedRoute>
+                    <ClimateAnalysis />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="history"
+                element={
+                  <ProtectedRoute>
+                    <History />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="reports"
+                element={
+                  <ProtectedRoute>
+                    <Reports />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="settings"
+                element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };

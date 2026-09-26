@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1 import health, auth, farms, crops, soil, weather, rain_analysis, waterlogging, crop_damage, assessment, admin
+from app.api.v1 import health, auth, farms, crops, soil, weather, rain_analysis, waterlogging, crop_damage, assessment, admin, farm_impact, alerts
 
 api_router = APIRouter()
 
@@ -12,6 +12,9 @@ api_router.include_router(weather.router)
 api_router.include_router(rain_analysis.router)
 api_router.include_router(waterlogging.router)
 api_router.include_router(crop_damage.router)
+api_router.include_router(farm_impact.router)
+api_router.include_router(alerts.router)
 api_router.include_router(assessment.router)
 api_router.include_router(admin.router)
+
 

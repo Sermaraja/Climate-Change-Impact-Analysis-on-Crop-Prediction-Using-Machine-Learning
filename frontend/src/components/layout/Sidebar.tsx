@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
   MapPin,
-  PlusCircle,
   CloudRain,
   Activity,
   LineChart,
@@ -28,11 +27,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
 
   const navItems = [
     { name: t('nav.dashboard'), shortName: language === 'ta' ? 'முகப்பு' : 'Home', path: '/dashboard', icon: LayoutDashboard, tourTag: 'dashboard' },
-    { name: t('nav.farm_impact'), shortName: language === 'ta' ? 'பாதிப்பு' : 'Impact', path: '/rain-impact', icon: ShieldAlert, highlight: true, tourTag: 'analyse-crop' },
+    { name: t('nav.farm_impact') || 'Farm & Crop Impact', shortName: language === 'ta' ? 'பாதிப்பு' : 'Impact', path: '/crop-impact', icon: ShieldAlert, highlight: true, tourTag: 'analyse-crop' },
     { name: t('nav.my_farms'), shortName: language === 'ta' ? 'பண்ணை' : 'Farms', path: '/farms', icon: MapPin, tourTag: 'my-farms' },
-    { name: t('nav.add_farm'), shortName: language === 'ta' ? 'சேர்' : 'Add', path: '/farms/new', icon: PlusCircle, tourTag: 'farm-map' },
+    { name: language === 'ta' ? 'எச்சரிக்கைகள்' : 'Alerts', shortName: language === 'ta' ? 'எச்சரிக்கை' : 'Alerts', path: '/alerts', icon: Activity, tourTag: 'alerts' },
     { name: t('nav.weather_forecast'), shortName: language === 'ta' ? 'வானிலை' : 'Weather', path: '/weather', icon: CloudRain, tourTag: 'weather' },
-    { name: t('nav.recovery'), shortName: language === 'ta' ? 'மீட்பு' : 'Recovery', path: '/recovery', icon: Activity, tourTag: 'recovery' },
+    { name: t('nav.recovery'), shortName: language === 'ta' ? 'மீட்பு' : 'Recovery', path: '/recovery', icon: Sprout, tourTag: 'recovery' },
     { name: t('nav.climate_analysis'), shortName: language === 'ta' ? 'காலநிலை' : 'Climate', path: '/climate-analysis', icon: LineChart, tourTag: 'climate-analysis' },
     { name: t('nav.history'), shortName: language === 'ta' ? 'வரலாறு' : 'History', path: '/history', icon: History, tourTag: 'history' },
     { name: t('nav.reports'), shortName: language === 'ta' ? 'அறிக்கை' : 'Reports', path: '/reports', icon: FileText, tourTag: 'reports' },

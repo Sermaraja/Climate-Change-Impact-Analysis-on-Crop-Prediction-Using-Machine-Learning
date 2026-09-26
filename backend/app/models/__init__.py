@@ -20,6 +20,7 @@ from app.models.crop_stress import (
     CropRecoveryProfile,
     AgronomicRecommendation,
 )
+from app.models.farm_impact_alert import FarmImpactAlert
 
 __all__ = [
     "Base",
@@ -47,4 +48,5 @@ __all__ = [
     "CropStageStressProfile",
     "CropRecoveryProfile",
     "AgronomicRecommendation",
+    "FarmImpactAlert",
 ]

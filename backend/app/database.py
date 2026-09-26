@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker, declarative_base
 from app.config import settings
@@ -21,6 +22,7 @@ if is_sqlite:
         dbapi_connection.create_function("AsEWKB", 1, lambda val: val.encode('utf-8') if isinstance(val, str) else val)
         dbapi_connection.create_function("AsText", 1, lambda val: val.decode('utf-8') if isinstance(val, bytes) else str(val))
         dbapi_connection.create_function("ST_AsGeoJSON", 1, lambda val: val)
+        dbapi_connection.create_function("now", 0, lambda: datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"))
 
 
 def get_db():

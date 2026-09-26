@@ -15,7 +15,8 @@ import { FarmsList } from './pages/FarmsList';
 import { FarmNew } from './pages/FarmNew';
 import { FarmDetail } from './pages/FarmDetail';
 import { Weather } from './pages/Weather';
-import { RainImpact } from './pages/RainImpact';
+import { FarmCropImpact } from './pages/FarmCropImpact';
+import { AlertsCenter } from './pages/AlertsCenter';
 import { Recovery } from './pages/Recovery';
 import { ClimateAnalysis } from './pages/ClimateAnalysis';
 import { History } from './pages/History';
@@ -65,6 +66,22 @@ export const App: React.FC = () => {
                   }
                 />
                 <Route
+                  path="/crop-impact"
+                  element={
+                    <ProtectedRoute>
+                      <FarmCropImpact />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/alerts"
+                  element={
+                    <ProtectedRoute>
+                      <AlertsCenter />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
                   path="/farms"
                   element={
                     <ProtectedRoute>
@@ -100,7 +117,7 @@ export const App: React.FC = () => {
                   path="/rain-impact"
                   element={
                     <ProtectedRoute>
-                      <RainImpact />
+                      <FarmCropImpact />
                     </ProtectedRoute>
                   }
                 />

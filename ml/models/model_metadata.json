@@ -1,0 +1,478 @@
+{
+  "training_timestamp": "2026-09-26T13:55:27.451332",
+  "dataset_path": "C:\\Users\\sermaraja\\.gemini\\antigravity-ide\\scratch\\climate-crop-impact\\data\\processed\\ml_feature_matrix.csv",
+  "dataset_rows": 600,
+  "qualified_targets_trained": [
+    "damage_class",
+    "survival_class"
+  ],
+  "unqualified_targets_skipped": [
+    "recovery_class",
+    "loss_class"
+  ],
+  "target_summaries": {
+    "damage_class": {
+      "target_name": "damage_class",
+      "selected_model": "LogisticRegression",
+      "best_f1_macro": 1.0,
+      "candidate_results": {
+        "LogisticRegression": {
+          "accuracy": 1.0,
+          "precision_macro": 1.0,
+          "recall_macro": 1.0,
+          "f1_macro": 1.0,
+          "f1_weighted": 1.0,
+          "roc_auc_macro": 1.0,
+          "per_class_report": {
+            "NO_DAMAGE": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 2.0
+            },
+            "SEVERE_DAMAGE": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 4.0
+            },
+            "SLIGHT_DAMAGE": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 8.0
+            },
+            "accuracy": 1.0,
+            "macro avg": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 14.0
+            },
+            "weighted avg": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 14.0
+            }
+          },
+          "confusion_matrix": [
+            [
+              2,
+              0,
+              0
+            ],
+            [
+              0,
+              4,
+              0
+            ],
+            [
+              0,
+              0,
+              8
+            ]
+          ],
+          "classes": [
+            "NO_DAMAGE",
+            "SEVERE_DAMAGE",
+            "SLIGHT_DAMAGE"
+          ]
+        },
+        "DecisionTree": {
+          "accuracy": 1.0,
+          "precision_macro": 1.0,
+          "recall_macro": 1.0,
+          "f1_macro": 1.0,
+          "f1_weighted": 1.0,
+          "roc_auc_macro": 1.0,
+          "per_class_report": {
+            "NO_DAMAGE": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 2.0
+            },
+            "SEVERE_DAMAGE": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 4.0
+            },
+            "SLIGHT_DAMAGE": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 8.0
+            },
+            "accuracy": 1.0,
+            "macro avg": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 14.0
+            },
+            "weighted avg": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 14.0
+            }
+          },
+          "confusion_matrix": [
+            [
+              2,
+              0,
+              0
+            ],
+            [
+              0,
+              4,
+              0
+            ],
+            [
+              0,
+              0,
+              8
+            ]
+          ],
+          "classes": [
+            "NO_DAMAGE",
+            "SEVERE_DAMAGE",
+            "SLIGHT_DAMAGE"
+          ]
+        },
+        "RandomForest": {
+          "accuracy": 1.0,
+          "precision_macro": 1.0,
+          "recall_macro": 1.0,
+          "f1_macro": 1.0,
+          "f1_weighted": 1.0,
+          "roc_auc_macro": 1.0,
+          "per_class_report": {
+            "NO_DAMAGE": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 2.0
+            },
+            "SEVERE_DAMAGE": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 4.0
+            },
+            "SLIGHT_DAMAGE": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 8.0
+            },
+            "accuracy": 1.0,
+            "macro avg": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 14.0
+            },
+            "weighted avg": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 14.0
+            }
+          },
+          "confusion_matrix": [
+            [
+              2,
+              0,
+              0
+            ],
+            [
+              0,
+              4,
+              0
+            ],
+            [
+              0,
+              0,
+              8
+            ]
+          ],
+          "classes": [
+            "NO_DAMAGE",
+            "SEVERE_DAMAGE",
+            "SLIGHT_DAMAGE"
+          ]
+        },
+        "GradientBoosting": {
+          "accuracy": 1.0,
+          "precision_macro": 1.0,
+          "recall_macro": 1.0,
+          "f1_macro": 1.0,
+          "f1_weighted": 1.0,
+          "roc_auc_macro": 1.0,
+          "per_class_report": {
+            "NO_DAMAGE": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 2.0
+            },
+            "SEVERE_DAMAGE": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 4.0
+            },
+            "SLIGHT_DAMAGE": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 8.0
+            },
+            "accuracy": 1.0,
+            "macro avg": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 14.0
+            },
+            "weighted avg": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 14.0
+            }
+          },
+          "confusion_matrix": [
+            [
+              2,
+              0,
+              0
+            ],
+            [
+              0,
+              4,
+              0
+            ],
+            [
+              0,
+              0,
+              8
+            ]
+          ],
+          "classes": [
+            "NO_DAMAGE",
+            "SEVERE_DAMAGE",
+            "SLIGHT_DAMAGE"
+          ]
+        }
+      }
+    },
+    "survival_class": {
+      "target_name": "survival_class",
+      "selected_model": "LogisticRegression",
+      "best_f1_macro": 1.0,
+      "candidate_results": {
+        "LogisticRegression": {
+          "accuracy": 1.0,
+          "precision_macro": 1.0,
+          "recall_macro": 1.0,
+          "f1_macro": 1.0,
+          "f1_weighted": 1.0,
+          "roc_auc_macro": 1.0,
+          "per_class_report": {
+            "HIGH_SURVIVAL": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 10.0
+            },
+            "LOW_SURVIVAL": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 4.0
+            },
+            "accuracy": 1.0,
+            "macro avg": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 14.0
+            },
+            "weighted avg": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 14.0
+            }
+          },
+          "confusion_matrix": [
+            [
+              10,
+              0
+            ],
+            [
+              0,
+              4
+            ]
+          ],
+          "classes": [
+            "HIGH_SURVIVAL",
+            "LOW_SURVIVAL"
+          ]
+        },
+        "DecisionTree": {
+          "accuracy": 1.0,
+          "precision_macro": 1.0,
+          "recall_macro": 1.0,
+          "f1_macro": 1.0,
+          "f1_weighted": 1.0,
+          "roc_auc_macro": 1.0,
+          "per_class_report": {
+            "HIGH_SURVIVAL": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 10.0
+            },
+            "LOW_SURVIVAL": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 4.0
+            },
+            "accuracy": 1.0,
+            "macro avg": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 14.0
+            },
+            "weighted avg": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 14.0
+            }
+          },
+          "confusion_matrix": [
+            [
+              10,
+              0
+            ],
+            [
+              0,
+              4
+            ]
+          ],
+          "classes": [
+            "HIGH_SURVIVAL",
+            "LOW_SURVIVAL"
+          ]
+        },
+        "RandomForest": {
+          "accuracy": 1.0,
+          "precision_macro": 1.0,
+          "recall_macro": 1.0,
+          "f1_macro": 1.0,
+          "f1_weighted": 1.0,
+          "roc_auc_macro": 1.0,
+          "per_class_report": {
+            "HIGH_SURVIVAL": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 10.0
+            },
+            "LOW_SURVIVAL": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 4.0
+            },
+            "accuracy": 1.0,
+            "macro avg": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 14.0
+            },
+            "weighted avg": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 14.0
+            }
+          },
+          "confusion_matrix": [
+            [
+              10,
+              0
+            ],
+            [
+              0,
+              4
+            ]
+          ],
+          "classes": [
+            "HIGH_SURVIVAL",
+            "LOW_SURVIVAL"
+          ]
+        },
+        "GradientBoosting": {
+          "accuracy": 1.0,
+          "precision_macro": 1.0,
+          "recall_macro": 1.0,
+          "f1_macro": 1.0,
+          "f1_weighted": 1.0,
+          "roc_auc_macro": 1.0,
+          "per_class_report": {
+            "HIGH_SURVIVAL": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 10.0
+            },
+            "LOW_SURVIVAL": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 4.0
+            },
+            "accuracy": 1.0,
+            "macro avg": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 14.0
+            },
+            "weighted avg": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1-score": 1.0,
+              "support": 14.0
+            }
+          },
+          "confusion_matrix": [
+            [
+              10,
+              0
+            ],
+            [
+              0,
+              4
+            ]
+          ],
+          "classes": [
+            "HIGH_SURVIVAL",
+            "LOW_SURVIVAL"
+          ]
+        }
+      }
+    }
+  },
+  "scientific_compliance": "Trained only targets with observed ground truth evidence (LIMITED_ML). Unqualified targets preserved under evidence-based rule engine."
+}

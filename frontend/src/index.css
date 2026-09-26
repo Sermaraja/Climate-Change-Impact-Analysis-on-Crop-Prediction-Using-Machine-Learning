@@ -2,42 +2,123 @@
 @import 'tailwindcss';
 
 @layer base {
+  html, body {
+    font-family: 'Inter', 'Noto Sans Tamil', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
   body {
-    @apply bg-slate-950 text-slate-100 antialiased font-sans selection:bg-emerald-500 selection:text-white;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(21, 128, 61, 0.12) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.1) 0px, transparent 50%),
-      radial-gradient(at 50% 100%, rgba(120, 85, 63, 0.08) 0px, transparent 50%);
-    background-attachment: fixed;
+    background-color: #f3f6f4;
+    color: #1e293b;
+    -webkit-font-smoothing: antialiased;
   }
 }
 
-/* Custom scrollbar */
+/* Custom light scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+  background: #f1f5f2;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(34, 197, 94, 0.3);
-  border-radius: 3px;
+  background: rgba(34, 197, 94, 0.4);
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(34, 197, 94, 0.5);
+  background: rgba(34, 197, 94, 0.7);
 }
 
+/* Premium Light AgriTech Card System (Matching Reference Images) */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid #e5ede8;
+  color: #1e293b;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
 }
 
 .glass-card {
-  background: rgba(30, 41, 59, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #ffffff;
+  border: 1px solid #e5ede8;
+  color: #1e293b;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04), 0 2px 4px -1px rgba(15, 23, 42, 0.02);
+  transition: all 0.2s ease-in-out;
+}
+
+.glass-card:hover {
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.06), 0 4px 8px -2px rgba(15, 23, 42, 0.03);
+}
+
+/* Light Theme Contrast Enhancements for nested cards */
+.glass-card h1, .glass-card h2, .glass-card h3, .glass-card h4, .glass-card h5, .glass-card h6 {
+  color: #0f172a;
+}
+
+.glass-card .text-white {
+  color: #0f172a;
+}
+
+.glass-card button.text-white,
+.glass-card a.text-white,
+.glass-card .bg-crop-500 .text-white,
+.glass-card .bg-emerald-600 .text-white {
+  color: #ffffff;
+}
+
+.glass-card .text-slate-400 {
+  color: #64748b;
+}
+
+.glass-card .text-slate-300 {
+  color: #334155;
+}
+
+.glass-card .bg-slate-900,
+.glass-card .bg-slate-900\/60,
+.glass-card .bg-slate-900\/80,
+.glass-card .bg-slate-900\/90 {
+  background-color: #f8faf8 !important;
+  border-color: #e5ede8 !important;
+}
+
+.glass-card .border-slate-800,
+.glass-card .border-slate-800\/60 {
+  border-color: #e5ede8 !important;
+}
+
+/* Soft Green Card Variant */
+.agri-card-green {
+  background: linear-gradient(135deg, #15803d 0%, #16a34a 50%, #22c55e 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 24px -4px rgba(22, 163, 74, 0.3);
+}
+
+/* Leaflet Container Polish */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 1.5rem;
+  z-index: 10;
+  background-color: #e5ede8;
+}
+
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  border-radius: 0.75rem !important;
+  overflow: hidden;
+}
+
+.leaflet-control-zoom-in, .leaflet-control-zoom-out {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

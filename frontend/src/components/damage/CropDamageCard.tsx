@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../services/api';
 import { Cpu, ShieldCheck, RefreshCw, Loader2 } from 'lucide-react';
-
+import { useLanguage } from '../../context/LanguageContext';
 
 export interface CropDamageResponse {
   prediction_id: number;
@@ -24,6 +24,7 @@ interface CropDamageCardProps {
 
 export const CropDamageCard: React.FC<CropDamageCardProps> = ({ farmId }) => {
   const queryClient = useQueryClient();
+  const { language, translateRisk, translateFactor } = useLanguage();
 
   const { data: damage, isLoading, isError, refetch } = useQuery<CropDamageResponse>({
     queryKey: ['cropDamageAnalysis', farmId],
@@ -64,7 +65,9 @@ export const CropDamageCard: React.FC<CropDamageCardProps> = ({ farmId }) => {
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Cpu className="w-5 h-5 text-purple-400" />
-          <h3 className="text-sm font-bold text-white">ML Crop Damage Intelligence Model</h3>
+          <h3 className="text-sm font-bold text-white">
+            {language === 'ta' ? 'இயந்திர கற்றல் பயிர் சேத மாதிரி' : 'ML Crop Damage Intelligence Model'}
+          </h3>
         </div>
 
         <button
@@ -73,49 +76,64 @@ export const CropDamageCard: React.FC<CropDamageCardProps> = ({ farmId }) => {
           className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-all disabled:opacity-50"
         >
           <RefreshCw className={`w-3.5 h-3.5 text-purple-400 ${runMutation.isPending ? 'animate-spin' : ''}`} />
-          <span>Run ML Inference</span>
+          <span>{language === 'ta' ? 'சேதத்தை பகுப்பாய்வு செய்' : 'Run ML Inference'}</span>
         </button>
       </div>
 
       {isLoading ? (
         <div className="p-6 flex items-center justify-center text-slate-400 text-xs">
-          <Loader2 className="w-5 h-5 animate-spin text-purple-400 mr-2" /> Running Machine Learning Crop Survival Model...
+          <Loader2 className="w-5 h-5 animate-spin text-purple-400 mr-2" />
+          {language === 'ta' ? 'பயிர் சேத மாதிரி இயங்குகிறது...' : 'Running Machine Learning Crop Survival Model...'}
         </div>
       ) : isError || !damage ? (
-        <p className="text-xs text-slate-400">Assign a crop profile to this farm to run ML damage inference.</p>
+        <p className="text-xs text-slate-400">
+          {language === 'ta'
+            ? 'பயிர் சேதத்தை பகுப்பாய்வு செய்ய இந்த பண்ணைக்கு பயிர் விவரத்தை ஒதுக்குங்கள்.'
+            : 'Assign a crop profile to this farm to run ML damage inference.'}
+        </p>
       ) : (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-xs text-slate-400 block">Predicted Crop Damage Class</span>
+              <span className="text-xs text-slate-400 block">
+                {language === 'ta' ? 'கணிக்கப்பட்ட பயிர் சேத வகை' : 'Predicted Crop Damage Class'}
+              </span>
               <span className={`inline-block px-3 py-1 mt-1 rounded-lg text-xs font-bold border ${getDamageBadgeStyle(damage.damage_class)}`}>
-                {damage.damage_class} DAMAGE
+                {translateRisk(damage.damage_class)} {language === 'ta' ? 'சேதம்' : 'DAMAGE'}
               </span>
             </div>
 
             <div className="text-right">
-              <span className="text-xs text-slate-400 block">Survival Probability</span>
+              <span className="text-xs text-slate-400 block">
+                {language === 'ta' ? 'பயிர் உயிர்வாழும் சாத்தியம்' : 'Survival Probability'}
+              </span>
               <span className="text-xl font-bold text-emerald-300">{Math.round(damage.survival_probability * 100)}%</span>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
-              <span className="text-slate-400 text-[11px] block">Estimated Yield Loss %</span>
+              <span className="text-slate-400 text-[11px] block">
+                {language === 'ta' ? 'மதிப்பிடப்பட்ட மகசூல் இழப்பு %' : 'Estimated Yield Loss %'}
+              </span>
               <span className="text-lg font-bold text-rose-300">{damage.estimated_yield_loss_pct}%</span>
             </div>
             <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
-              <span className="text-slate-400 text-[11px] block">Model Confidence Score</span>
+              <span className="text-slate-400 text-[11px] block">
+                {language === 'ta' ? 'மாதிரியின் நம்பகத்தன்மை' : 'Model Confidence Score'}
+              </span>
               <span className="text-lg font-bold text-purple-300">{Math.round(damage.confidence_score * 100)}%</span>
             </div>
           </div>
 
           {/* Main Contributing Factors */}
           <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5 text-xs">
-            <span className="font-semibold text-slate-300 block">Main ML Input Factors:</span>
+            <span className="font-semibold text-slate-300 block">
+              {language === 'ta' ? 'முக்கிய கணிப்புக் காரணிகள்:' : 'Main ML Input Factors:'}
+            </span>
             <ul className="list-disc list-inside text-slate-300 text-[11px] space-y-1">
               {damage.main_input_factors.map((factor, idx) => (
-                <li key={idx}>{factor}</li>
+                <li key={idx}>{translateFactor(factor)}</li>
               ))}
             </ul>
           </div>
@@ -124,7 +142,7 @@ export const CropDamageCard: React.FC<CropDamageCardProps> = ({ farmId }) => {
             <span className="flex items-center gap-1 text-purple-300 font-mono">
               <ShieldCheck className="w-3.5 h-3.5 text-purple-400" /> Model: DecisionTree / RandomForest ({damage.model_version})
             </span>
-            <span className="text-slate-500">Evaluated: {new Date(damage.created_at).toLocaleTimeString()}</span>
+            <span className="text-slate-500">{new Date(damage.created_at).toLocaleTimeString()}</span>
           </div>
         </div>
       )}

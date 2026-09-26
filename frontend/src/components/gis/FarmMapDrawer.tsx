@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Polygon, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { Navigation, Trash2, Undo2, Layers, CheckCircle2 } from 'lucide-react';
-
+import { useLanguage } from '../../context/LanguageContext';
 
 // Fix Leaflet default marker icon paths in Vite
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -65,6 +65,7 @@ function MapEvents({ onMapClick }: { onMapClick: (lat: number, lng: number) => v
 }
 
 export const FarmMapDrawer: React.FC<FarmMapDrawerProps> = ({ onBoundaryChange, initialPolygon }) => {
+  const { language } = useLanguage();
   // Thanjavur, Tamil Nadu default center
   const [center, setCenter] = useState<[number, number]>([10.7870, 79.1378]);
   const [polygonPoints, setPolygonPoints] = useState<[number, number][]>(initialPolygon || []);
@@ -122,7 +123,7 @@ export const FarmMapDrawer: React.FC<FarmMapDrawerProps> = ({ onBoundaryChange, 
 
   const handleGeolocation = () => {
     if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser');
+      alert(language === 'ta' ? 'உங்கள் உலாவியில் இருப்பிட வசதி இல்லை' : 'Geolocation is not supported by your browser');
       return;
     }
 
@@ -136,7 +137,7 @@ export const FarmMapDrawer: React.FC<FarmMapDrawerProps> = ({ onBoundaryChange, 
       },
       (error) => {
         console.error('Geolocation error:', error);
-        alert('Could not obtain location permissions. Using default center.');
+        alert(language === 'ta' ? 'இருப்பிட அனுமதியைப் பெற முடியவில்லை. இயல்புநிலை மையம் பயன்படுத்தப்படுகிறது.' : 'Could not obtain location permissions. Using default center.');
         setGeoLocating(false);
       },
       { timeout: 10000, enableHighAccuracy: true }
@@ -157,11 +158,13 @@ export const FarmMapDrawer: React.FC<FarmMapDrawerProps> = ({ onBoundaryChange, 
             className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 flex items-center gap-1.5 transition-colors disabled:opacity-50"
           >
             <Navigation className={`w-3.5 h-3.5 text-climate-400 ${geoLocating ? 'animate-spin' : ''}`} />
-            <span>{geoLocating ? 'Locating...' : 'Use My Location'}</span>
+            <span>{geoLocating ? (language === 'ta' ? 'கண்டறியப்படுகிறது...' : 'Locating...') : (language === 'ta' ? 'என் இருப்பிடம்' : 'Use My Location')}</span>
           </button>
 
           <span className="text-slate-400 text-[11px] hidden sm:inline">
-            Click map to set polygon corner vertices ({polygonPoints.length} points)
+            {language === 'ta'
+              ? `வரைபடத்தில் புள்ளிகளை அமைத்து எல்லைக் கோட்டை வரையவும் (${polygonPoints.length} புள்ளிகள்)`
+              : `Click map to set polygon corner vertices (${polygonPoints.length} points)`}
           </span>
         </div>
 
@@ -171,10 +174,10 @@ export const FarmMapDrawer: React.FC<FarmMapDrawerProps> = ({ onBoundaryChange, 
             onClick={handleUndo}
             disabled={polygonPoints.length === 0}
             className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1 transition-colors disabled:opacity-40"
-            title="Undo last vertex"
+            title={language === 'ta' ? 'மீளமை' : 'Undo last vertex'}
           >
             <Undo2 className="w-3.5 h-3.5" />
-            <span>Undo</span>
+            <span>{language === 'ta' ? 'மீளமை' : 'Undo'}</span>
           </button>
 
           <button
@@ -182,10 +185,10 @@ export const FarmMapDrawer: React.FC<FarmMapDrawerProps> = ({ onBoundaryChange, 
             onClick={handleClear}
             disabled={polygonPoints.length === 0}
             className="px-2.5 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 flex items-center gap-1 transition-colors disabled:opacity-40"
-            title="Clear all points"
+            title={language === 'ta' ? 'அழி' : 'Clear all points'}
           >
             <Trash2 className="w-3.5 h-3.5" />
-            <span>Clear</span>
+            <span>{language === 'ta' ? 'அழி' : 'Clear'}</span>
           </button>
         </div>
       </div>
@@ -204,7 +207,7 @@ export const FarmMapDrawer: React.FC<FarmMapDrawerProps> = ({ onBoundaryChange, 
           {polygonPoints.map((point, idx) => (
             <Marker key={idx} position={point}>
               <Popup>
-                Point {idx + 1}: {point[0]}° N, {point[1]}° E
+                {language === 'ta' ? 'புள்ளி' : 'Point'} {idx + 1}: {point[0]}° N, {point[1]}° E
               </Popup>
             </Marker>
           ))}
@@ -228,7 +231,7 @@ export const FarmMapDrawer: React.FC<FarmMapDrawerProps> = ({ onBoundaryChange, 
       <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs">
         <div className="flex items-center gap-2">
           <Layers className="w-4 h-4 text-crop-400" />
-          <span className="text-slate-400">Calculated Farm Area:</span>
+          <span className="text-slate-400">{language === 'ta' ? 'கணக்கிடப்பட்ட பண்ணை பரப்பளவு:' : 'Calculated Farm Area:'}</span>
           <span className="font-bold text-white text-sm">
             {acres} Acres <span className="text-slate-400 font-normal">({hectares} Ha)</span>
           </span>
@@ -237,11 +240,13 @@ export const FarmMapDrawer: React.FC<FarmMapDrawerProps> = ({ onBoundaryChange, 
         {polygonPoints.length >= 3 ? (
           <div className="flex items-center gap-1.5 text-emerald-400 font-medium text-xs">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <span>Valid Closed Polygon ({polygonPoints.length} vertices)</span>
+            <span>{language === 'ta' ? `செல்லுபடியாகும் பலகோணம் (${polygonPoints.length} புள்ளிகள்)` : `Valid Closed Polygon (${polygonPoints.length} vertices)`}</span>
           </div>
         ) : (
           <span className="text-amber-400 text-[11px]">
-            Please click at least 3 points on the map to define farm boundary polygon.
+            {language === 'ta'
+              ? 'பண்ணை பலகோண எல்லையை வரைய வரைபடத்தில் குறைந்தது 3 புள்ளிகளைக் கிளிக் செய்யவும்.'
+              : 'Please click at least 3 points on the map to define farm boundary polygon.'}
           </span>
         )}
       </div>

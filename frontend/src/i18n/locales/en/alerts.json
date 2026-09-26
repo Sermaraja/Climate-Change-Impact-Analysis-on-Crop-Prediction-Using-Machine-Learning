@@ -1,0 +1,29 @@
+{
+  "title": "Farm Impact Alerts",
+  "official_weather_warning": "Official Weather Warning",
+  "app_crop_impact_risk": "Application Crop Impact Risk",
+  "warning_distinction_note": "Official weather warnings indicate regional meteorological hazard levels, whereas CropClimate AI calculates farm-specific crop vulnerability based on soil, crop stage, and drainage.",
+  "levels": {
+    "GREEN": "🟢 Low Crop Impact Risk",
+    "YELLOW": "🟡 Elevated Crop Impact Risk",
+    "ORANGE": "🟠 High Crop Impact Risk",
+    "RED": "🔴 Severe Crop Impact Risk"
+  },
+  "factors": {
+    "POOR_DRAINAGE": "Poor drainage increases waterlogging risk.",
+    "MODERATE_DRAINAGE": "Moderate drainage slows water discharge during heavy showers.",
+    "GOOD_DRAINAGE": "Good field drainage allows fast surface runoff.",
+    "SENSITIVE_STAGE": "Current crop growth stage is sensitive to excess root moisture.",
+    "HIGH_RAINFALL": "Heavy forecast precipitation exceeds soil infiltration rate.",
+    "SATURATED_SOIL": "Soil moisture is elevated from antecedent rainfall.",
+    "PROLONGED_SUBMERSION": "Prolonged waterlogging restricts root zone oxygen exchange.",
+    "CLAY_SOIL_RETENTION": "High clay fraction slows water percolation.",
+    "SANDY_RAPID_DRAIN": "Sandy soil facilitates quick percolation.",
+    "TOP_DRESSING_VULNERABLE": "Recent fertilizer application risks nutrient leaching."
+  },
+  "status": {
+    "ACTIVE": "Active Alert",
+    "ACKNOWLEDGED": "Acknowledged",
+    "RESOLVED": "Resolved"
+  }
+}

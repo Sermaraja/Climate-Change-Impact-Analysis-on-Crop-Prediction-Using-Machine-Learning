@@ -5,6 +5,10 @@ import type { MasterCrop, FarmCropData } from '../../types/crop';
 import { X, Sprout, Tag, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 
+import { useToast } from '../../context/ToastContext';
+import { useNavigate } from 'react-router-dom';
+
+
 interface CropModalProps {
   farmId: number;
   existingCrop?: FarmCropData | null;
@@ -14,6 +18,8 @@ interface CropModalProps {
 
 export const CropModal: React.FC<CropModalProps> = ({ farmId, existingCrop, isOpen, onClose }) => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const { data: masterCrops = [], isLoading: isLoadingCrops } = useQuery<MasterCrop[]>({
     queryKey: ['masterCrops'],
@@ -79,6 +85,16 @@ export const CropModal: React.FC<CropModalProps> = ({ farmId, existingCrop, isOp
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['farmCrop', farmId] });
       queryClient.invalidateQueries({ queryKey: ['farm', farmId] });
+
+      showToast({
+        type: 'success',
+        message: 'Your farm is ready for analysis.',
+        secondaryMessage: 'We can now combine your farm, crop and weather information to assess rainfall-related risk.',
+        actionLabel: 'Analyse My Crop',
+        onAction: () => navigate('/rain-impact'),
+        duration: 8000,
+      });
+
       onClose();
     },
     onError: (err: any) => {

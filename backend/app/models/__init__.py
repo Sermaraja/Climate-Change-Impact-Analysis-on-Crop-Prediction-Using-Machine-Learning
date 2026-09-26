@@ -13,6 +13,13 @@ from app.models.prediction import (
     PredictionExplanation,
 )
 from app.models.assessment import PostRainAssessment
+from app.models.crop_stress import (
+    EvidenceSource,
+    CropStressProfile,
+    CropStageStressProfile,
+    CropRecoveryProfile,
+    AgronomicRecommendation,
+)
 
 __all__ = [
     "Base",
@@ -35,4 +42,9 @@ __all__ = [
     "Recommendation",
     "PredictionExplanation",
     "PostRainAssessment",
+    "EvidenceSource",
+    "CropStressProfile",
+    "CropStageStressProfile",
+    "CropRecoveryProfile",
+    "AgronomicRecommendation",
 ]

@@ -1,0 +1,88 @@
+{
+  "title": "Farm & Crop Impact",
+  "subtitle": "Evaluates heavy rainfall, waterlogging vulnerability, crop damage severity, and post-rain recovery potential.",
+  "select_farm": "Select Farm for Impact Analysis",
+  "no_farms": "No farms registered yet.",
+  "run_analysis": "Analyse Rain Impact",
+  "analyzing": "Running Hybrid ML & Rule Analysis...",
+  "tabs": {
+    "analysis": "Crop Impact Risk & Actions",
+    "post_rain": "Post-Rain Field Assessment"
+  },
+  "farm_header": {
+    "crop": "Crop",
+    "growth_stage": "Growth Stage",
+    "crop_age": "Crop Age",
+    "soil_type": "Soil Type",
+    "drainage": "Drainage",
+    "variety": "Variety"
+  },
+  "metrics": {
+    "rain_risk": "Rain Risk",
+    "waterlogging_risk": "Waterlogging Risk",
+    "crop_damage_risk": "Crop Damage Risk",
+    "survival_potential": "Survival Potential",
+    "recovery_potential": "Recovery Potential",
+    "crop_loss_risk": "Crop Loss Risk",
+    "weather_conditions": "Observed & Forecast Conditions",
+    "temp": "Current Temperature",
+    "humidity": "Relative Humidity",
+    "forecast_24h": "Forecast 24h Rain",
+    "forecast_48h": "Forecast 48h Rain",
+    "prev_48h": "Previous 48h Rain",
+    "antecedent_index": "Soil Wetness Index"
+  },
+  "why_this_alert": {
+    "title": "Why This Alert?",
+    "subtitle": "Scientific explanation of key factors driving this prediction",
+    "method": "Prediction Methodology",
+    "confidence": "Model Confidence",
+    "key_factors": "Key Contributing Risk Factors",
+    "feature_importance": "Technical Feature Importances",
+    "hybrid_note": "Hybrid ML combines validated agronomic rule bounds with trained Gradient Boosting classification."
+  },
+  "what_should_i_do": {
+    "title": "What Should I Do?",
+    "subtitle": "Time-sensitive agronomic recommendations and field protection protocols",
+    "recommended_actions": "Recommended Actions",
+    "priority_actions": "Priority Actions",
+    "view_recommended_actions": "View Recommended Actions",
+    "before_rain": "Before Rain",
+    "during_rain": "During Rain",
+    "after_rain": "After Rain",
+    "action": "Action",
+    "reason": "Scientific Rationale",
+    "timing": "Recommended Timing",
+    "priority": "Priority",
+    "evidence": "Evidence Reference"
+  },
+  "post_rain": {
+    "title": "Post-Rain Field Ground-Truth Assessment",
+    "subtitle": "Record actual on-field standing water and visible crop condition to update recovery potential.",
+    "standing_water": "Is there standing water in the field?",
+    "standing_duration": "Duration of Standing Water",
+    "leaf_condition": "Leaf Condition",
+    "plant_condition": "Plant / Stem Condition",
+    "visible_damage": "Visible Crop Damage",
+    "notes": "Farmer Observations / Notes",
+    "notes_placeholder": "Describe field bund status, soil slushiness, or drainage efforts...",
+    "submit_btn": "Submit Field Assessment & Recalculate Recovery",
+    "submitting": "Submitting Assessment...",
+    "history_title": "Field Assessment History",
+    "no_assessments": "No field assessments submitted for this farm yet.",
+    "updated_recovery": "Updated Recovery Potential",
+    "updated_loss": "Updated Loss Risk"
+  },
+  "core_feature": {
+    "which_farms_affected": "Which farms could be affected?",
+    "affected_farms": "Affected Farms",
+    "crop": "Crop",
+    "growth_stage": "Growth Stage",
+    "why_this_alert": "Why This Alert?",
+    "what_should_i_do": "What Should I Do?",
+    "recommended_actions": "Recommended Actions",
+    "analyse_all_farms": "Analyse All My Farms",
+    "farm_impact_map": "Farm Impact Map",
+    "farms_requiring_attention": "Farms Requiring Attention"
+  }
+}

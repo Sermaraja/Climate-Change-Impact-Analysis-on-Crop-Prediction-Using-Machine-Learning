@@ -1,0 +1,22 @@
+{
+  "title": "Weather Forecast",
+  "subtitle": "Hourly meteorological forecast and multi-window rainfall monitoring for your farm.",
+  "select_farm": "Select Farm",
+  "current_weather": "Current Weather Conditions",
+  "temperature": "Temperature",
+  "humidity": "Humidity",
+  "precipitation": "Rainfall",
+  "rainfall": "Rainfall",
+  "wind_speed": "Wind Speed",
+  "rain_probability": "Rain Probability",
+  "previous_rainfall": "Previous Rainfall",
+  "forecast_rainfall": "Forecast Rainfall",
+  "next_24_hours": "Next 24 Hours",
+  "next_48_hours": "Next 48 Hours",
+  "previous_72_hours": "Previous 72 Hours",
+  "hourly_timeline": "Hourly Precipitation & Probability Timeline",
+  "live_data_source": "Data Source: Open-Meteo High-Resolution Ensemble API",
+  "cached_notice": "Weather readings are cached for high-performance responsiveness.",
+  "rain_accumulation": "Cumulative Rainfall Forecast",
+  "weather_risks": "Weather Risk Indicators"
+}

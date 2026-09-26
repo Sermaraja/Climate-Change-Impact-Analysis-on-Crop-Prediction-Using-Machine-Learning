@@ -1,0 +1,28 @@
+{
+  "title": "Actionable Agronomic Guidance",
+  "subtitle": "Scientific crop protection protocols organized by precipitation timing windows.",
+  "before_rain": "Before Rain",
+  "during_rain": "During Rain",
+  "after_rain": "After Rain",
+  "priority_actions": "Priority Actions",
+  "view_recommended_actions": "View Recommended Actions",
+  "time_window": "Timing Window",
+  "action": "Action",
+  "reason": "Scientific Rationale",
+  "evidence": "Evidence Reference",
+  "default_before": {
+    "title": "Clear Peripheral Drainage Channels",
+    "action": "Remove silt and debris from field bund outlets to accelerate water discharge before showers intensify.",
+    "reason": "Prevents initial flash water ponding in low-lying field zones."
+  },
+  "default_during": {
+    "title": "Monitor Field Drainage Flow",
+    "action": "Ensure bund spillways remain unobstructed and avoid traversing deeply saturated fields.",
+    "reason": "Prevents soil compaction and bund breaches."
+  },
+  "default_after": {
+    "title": "Foliar Spray of 1% Potassium Nitrate (KNO3)",
+    "action": "Apply once stagnant water recedes to boost plant vigor and stimulate root respiration.",
+    "reason": "Overcomes temporary anaerobic root stress caused by waterlogging."
+  }
+}

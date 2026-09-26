@@ -1,26 +1,70 @@
+# ==============================================================================
+# CropClimate AI - Git Ignore Rules
+# ==============================================================================
+
 # Dependencies
 node_modules/
+*/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python virtual environments & bytecode
 backend/venv/
 venv/
 .venv/
+env/
+ENV/
 __pycache__/
-*.pyc
-*.pyo
+*/__pycache__/
+*/*/__pycache__/
+*.py[cod]
+*$py.class
 
-# Build & Output
+# Build & distribution output
 dist/
+*/dist/
 build/
+*/build/
+out/
+.vite/
 *.egg-info/
 .pytest_cache/
 .coverage
+htmlcov/
 
-# Environment & Secrets
+# Environment files, credentials, secrets & passwords
 .env
-.env.local
-*.log
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.secret
+*.pfx
+*.cert
+credentials.json
+client_secret*.json
 
-# IDE & OS
+# Databases & local persistent state
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Logs & temp files
+*.log
+logs/
+*.tmp
+*.temp
+scratch/
+.system_generated/
+
+# IDE, OS & editor files
 .vscode/
 .idea/
+*.sublime-project
+*.sublime-workspace
 .DS_Store
 Thumbs.db
+desktop.ini

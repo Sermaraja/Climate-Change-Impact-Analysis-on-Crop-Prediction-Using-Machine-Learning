@@ -8,6 +8,9 @@ export interface UserProfile {
   email: string;
   phone?: string;
   role: string;
+  is_admin?: boolean;
+  onboarding_completed?: boolean;
+  tour_status?: string;
   preferred_language: string;
   created_at: string;
 }
@@ -19,6 +22,7 @@ interface AuthContextType {
   login: (token: string, user: UserProfile) => void;
   register: (token: string, user: UserProfile) => void;
   logout: () => void;
+  updateOnboardingStatus: (onboarding_completed?: boolean, tour_status?: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -84,8 +88,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.removeItem('agri_user');
   };
 
+  const updateOnboardingStatus = async (onboarding_completed?: boolean, tour_status?: string) => {
+    try {
+      const response = await apiClient.put<UserProfile>('/auth/me/onboarding', {
+        onboarding_completed,
+        tour_status,
+      });
+      setUser(response.data);
+      localStorage.setItem('agri_user', JSON.stringify(response.data));
+    } catch (error) {
+      console.error('Failed to update onboarding status:', error);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout, updateOnboardingStatus }}>
       {children}
     </AuthContext.Provider>
   );

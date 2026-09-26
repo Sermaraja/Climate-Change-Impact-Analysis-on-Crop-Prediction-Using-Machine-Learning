@@ -10,8 +10,7 @@ import { CropCard } from '../components/crops/CropCard';
 import { SoilCard } from '../components/soil/SoilCard';
 import { WaterloggingCard } from '../components/waterlogging/WaterloggingCard';
 import { CropDamageCard } from '../components/damage/CropDamageCard';
-
-
+import { useLanguage } from '../context/LanguageContext';
 
 export interface FarmDetailData {
   id: number;
@@ -33,6 +32,7 @@ export const FarmDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { t, language, translateDrainage } = useLanguage();
 
   const farmId = Number(id);
 
@@ -63,7 +63,6 @@ export const FarmDetail: React.FC = () => {
     enabled: !!id,
   });
 
-
   const deleteMutation = useMutation({
     mutationFn: async () => {
       await apiClient.delete(`/farms/${id}`);
@@ -75,7 +74,7 @@ export const FarmDetail: React.FC = () => {
   });
 
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this farm boundary from your account?')) {
+    if (window.confirm(language === 'ta' ? 'இந்த பண்ணை எல்லையை உங்கள் கணக்கிலிருந்து நீக்க விரும்புகிறீர்களா?' : 'Are you sure you want to delete this farm boundary from your account?')) {
       deleteMutation.mutate();
     }
   };
@@ -84,7 +83,7 @@ export const FarmDetail: React.FC = () => {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center text-slate-100">
         <Loader2 className="w-8 h-8 text-crop-400 animate-spin mb-2" />
-        <p className="text-xs text-slate-400">Loading Farm GIS Details...</p>
+        <p className="text-xs text-slate-400">{t('common.loading', 'Loading Farm GIS Details...')}</p>
       </div>
     );
   }
@@ -93,12 +92,12 @@ export const FarmDetail: React.FC = () => {
     return (
       <div className="glass-card p-6 rounded-2xl border border-slate-800 text-center space-y-3">
         <AlertCircle className="w-8 h-8 text-rose-400 mx-auto" />
-        <h2 className="text-base font-bold text-white">Farm Not Found</h2>
+        <h2 className="text-base font-bold text-white">{language === 'ta' ? 'பண்ணை காணப்படவில்லை' : 'Farm Not Found'}</h2>
         <p className="text-xs text-slate-400">
-          {(farmError as any)?.response?.data?.detail || 'Farm does not exist or you do not have permission to view it.'}
+          {(farmError as any)?.response?.data?.detail || (language === 'ta' ? 'பண்ணை இல்லை அல்லது அதைப் பார்க்கும் அனுமதி உங்களுக்கு இல்லை.' : 'Farm does not exist or you do not have permission to view it.')}
         </p>
         <Link to="/farms" className="inline-flex items-center gap-2 text-xs font-semibold text-crop-400 hover:underline">
-          <ArrowLeft className="w-4 h-4" /> Return to My Farms
+          <ArrowLeft className="w-4 h-4" /> {language === 'ta' ? 'என் பண்ணைகளுக்குத் திரும்பு' : 'Return to My Farms'}
         </Link>
       </div>
     );
@@ -126,7 +125,7 @@ export const FarmDetail: React.FC = () => {
               className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 text-slate-950 font-semibold text-xs flex items-center gap-1.5 transition-all shadow-md shadow-amber-500/20"
             >
               <ShieldAlert className="w-4 h-4" />
-              <span>Assess Rain Impact</span>
+              <span>{language === 'ta' ? 'மழை பாதிப்பை மதிப்பிடு' : 'Assess Rain Impact'}</span>
             </Link>
             <button
               onClick={handleDelete}
@@ -134,7 +133,7 @@ export const FarmDetail: React.FC = () => {
               className="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-medium flex items-center gap-1.5 transition-colors disabled:opacity-50"
             >
               <Trash2 className="w-3.5 h-3.5" />
-              <span>Delete</span>
+              <span>{t('common.delete', 'Delete')}</span>
             </button>
           </div>
         }
@@ -152,26 +151,24 @@ export const FarmDetail: React.FC = () => {
         <CropDamageCard farmId={farmId} />
       </div>
 
-
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Farm Metadata Card */}
         <div className="lg:col-span-1 glass-card p-6 rounded-2xl border border-slate-800 space-y-4">
           <h2 className="text-sm font-bold text-white flex items-center gap-2">
-            <Sprout className="w-4 h-4 text-crop-400" /> GIS Plot Attributes
+            <Sprout className="w-4 h-4 text-crop-400" /> {language === 'ta' ? 'ஜிஐஎஸ் நிலப்பரப்பு விவரங்கள்' : 'GIS Plot Attributes'}
           </h2>
 
           <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3 text-xs">
             <div className="flex justify-between">
-              <span className="text-slate-400">Total Area (Acres):</span>
+              <span className="text-slate-400">{language === 'ta' ? 'மொத்த பரப்பளவு (ஏக்கர்):' : 'Total Area (Acres):'}</span>
               <span className="font-bold text-white">{farm.area_acres} Acres</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Total Area (Hectares):</span>
+              <span className="text-slate-400">{language === 'ta' ? 'மொத்த பரப்பளவு (ஹெக்டேர்):' : 'Total Area (Hectares):'}</span>
               <span className="font-bold text-crop-300">{farm.area_hectares} Ha</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Soil Drainage Class:</span>
+              <span className="text-slate-400">{language === 'ta' ? 'மண் வடிகால் தரம்:' : 'Soil Drainage Class:'}</span>
               <span
                 className={`font-semibold px-2 py-0.5 rounded text-[10px] ${
                   farm.drainage_class === 'POOR'
@@ -181,23 +178,23 @@ export const FarmDetail: React.FC = () => {
                     : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                 }`}
               >
-                {farm.drainage_class || 'MODERATE'}
+                {translateDrainage(farm.drainage_class || 'MODERATE')}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Village / Town:</span>
+              <span className="text-slate-400">{t('farms.village', 'Village / Town:')}</span>
               <span className="font-medium text-slate-200">{farm.village || 'N/A'}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">District:</span>
+              <span className="text-slate-400">{t('farms.district', 'District:')}</span>
               <span className="font-medium text-slate-200">{farm.district || 'N/A'}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">State:</span>
+              <span className="text-slate-400">{t('farms.state', 'State:')}</span>
               <span className="font-medium text-slate-200">{farm.state || 'N/A'}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Centroid Coordinates:</span>
+              <span className="text-slate-400">{language === 'ta' ? 'மைய ஒருங்கிணைப்புகள்:' : 'Centroid Coordinates:'}</span>
               <span className="font-mono text-slate-300">
                 {farm.latitude}°, {farm.longitude}°
               </span>
@@ -208,7 +205,7 @@ export const FarmDetail: React.FC = () => {
         {/* Saved Leaflet Polygon Map */}
         <div className="lg:col-span-2 glass-card p-6 rounded-2xl border border-slate-800">
           <h2 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-crop-400" /> Stored PostGIS Polygon Boundary
+            <MapPin className="w-4 h-4 text-crop-400" /> {language === 'ta' ? 'சேமிக்கப்பட்ட பண்ணை எல்லை வரைபடம்' : 'Stored PostGIS Polygon Boundary'}
           </h2>
 
           <div className="w-full h-[450px] rounded-xl overflow-hidden border border-slate-800 relative z-0">

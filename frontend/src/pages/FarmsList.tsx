@@ -5,9 +5,10 @@ import { useQuery } from '@tanstack/react-query';
 import { MapPin, PlusCircle, Sprout, Layers, ChevronRight, Loader2, AlertCircle } from 'lucide-react';
 import { apiClient } from '../services/api';
 import type { FarmDetailData } from './FarmDetail';
-
+import { useLanguage } from '../context/LanguageContext';
 
 export const FarmsList: React.FC = () => {
+  const { t, language, translateDrainage, translateCrop } = useLanguage();
   const { data: farms = [], isLoading, isError, error } = useQuery<FarmDetailData[]>({
     queryKey: ['farms'],
     queryFn: async () => {
@@ -19,15 +20,15 @@ export const FarmsList: React.FC = () => {
   return (
     <div>
       <PageHeader
-        title="My Farms"
-        subtitle="Manage farm polygon boundaries, crop growth stages, and verified soil profiles"
+        title={t('farms.title', 'My Farms')}
+        subtitle={t('farms.subtitle', 'Manage farm polygon boundaries, crop growth stages, and verified soil profiles')}
         action={
           <Link
             to="/farms/new"
             className="px-4 py-2 rounded-xl bg-gradient-to-r from-crop-600 to-crop-500 hover:from-crop-500 hover:to-crop-400 text-white font-medium text-xs flex items-center gap-2 shadow-lg shadow-crop-500/20 transition-all"
           >
             <PlusCircle className="w-4 h-4" />
-            <span>Add New Farm</span>
+            <span>{t('farms.add_farm', 'Add New Farm')}</span>
           </Link>
         }
       />
@@ -35,14 +36,14 @@ export const FarmsList: React.FC = () => {
       {isLoading && (
         <div className="min-h-[40vh] flex flex-col items-center justify-center text-slate-100">
           <Loader2 className="w-8 h-8 text-crop-400 animate-spin mb-2" />
-          <p className="text-xs text-slate-400">Loading your registered farms...</p>
+          <p className="text-xs text-slate-400">{t('common.loading', 'Loading your registered farms...')}</p>
         </div>
       )}
 
       {isError && (
         <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2 mb-6">
           <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
-          <span>{(error as any)?.response?.data?.detail || 'Failed to load farms from server.'}</span>
+          <span>{(error as any)?.response?.data?.detail || (language === 'ta' ? 'பண்ணைத் தகவல்களை ஏற்றுவதில் பிழை ஏற்பட்டது.' : 'Failed to load farms from server.')}</span>
         </div>
       )}
 
@@ -52,9 +53,11 @@ export const FarmsList: React.FC = () => {
             <MapPin className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-white">No Farms Registered Yet</h2>
+            <h2 className="text-base font-bold text-white">{t('farms.no_farms', 'No Farms Registered Yet')}</h2>
             <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-              Draw your farm boundary polygon on the map to start receiving extreme rainfall impact predictions.
+              {language === 'ta'
+                ? 'கனமழை பாதிப்பு கணிப்புகளைப் பெற வரைபடத்தில் உங்கள் பண்ணை எல்லை பலகோணத்தை வரையவும்.'
+                : 'Draw your farm boundary polygon on the map to start receiving extreme rainfall impact predictions.'}
             </p>
           </div>
           <Link
@@ -62,7 +65,7 @@ export const FarmsList: React.FC = () => {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-crop-600 hover:bg-crop-500 text-white font-medium text-xs shadow-lg shadow-crop-500/20 transition-all"
           >
             <PlusCircle className="w-4 h-4" />
-            <span>Draw First Farm Boundary</span>
+            <span>{language === 'ta' ? 'முதல் பண்ணை எல்லையை வரை' : 'Draw First Farm Boundary'}</span>
           </Link>
         </div>
       )}
@@ -96,14 +99,14 @@ export const FarmsList: React.FC = () => {
                       : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
                   }`}
                 >
-                  {farm.drainage_class || 'MODERATE'} DRAINAGE
+                  {translateDrainage(farm.drainage_class || 'MODERATE')} {language === 'ta' ? 'வடிகால்' : 'DRAINAGE'}
                 </span>
               </div>
 
               <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2 mb-4 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-400 flex items-center gap-1.5">
-                    <Layers className="w-3.5 h-3.5 text-crop-400" /> Plot Area:
+                    <Layers className="w-3.5 h-3.5 text-crop-400" /> {language === 'ta' ? 'பரப்பளவு:' : 'Plot Area:'}
                   </span>
                   <span className="font-semibold text-white">
                     {farm.area_acres} Acres <span className="text-slate-400 font-normal">({farm.area_hectares} Ha)</span>
@@ -111,9 +114,11 @@ export const FarmsList: React.FC = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-slate-400 flex items-center gap-1.5">
-                    <Sprout className="w-3.5 h-3.5 text-climate-400" /> Active Crop:
+                    <Sprout className="w-3.5 h-3.5 text-climate-400" /> {language === 'ta' ? 'பயிர்:' : 'Active Crop:'}
                   </span>
-                  <span className="font-medium text-slate-200">Paddy (Flowering Stage)</span>
+                  <span className="font-medium text-slate-200">
+                    {translateCrop('Paddy')} ({language === 'ta' ? 'பூக்கும் நிலை' : 'Flowering Stage'})
+                  </span>
                 </div>
               </div>
             </div>
@@ -123,13 +128,13 @@ export const FarmsList: React.FC = () => {
                 to={`/farms/${farm.id}`}
                 className="text-xs font-semibold text-slate-300 hover:text-white"
               >
-                View GIS Boundary
+                {language === 'ta' ? 'வரைபட எல்லையைப் பார்' : 'View GIS Boundary'}
               </Link>
               <Link
                 to="/rain-impact"
                 className="text-xs font-medium text-crop-400 hover:text-crop-300 flex items-center gap-1"
               >
-                <span>Assess Rain Risk</span>
+                <span>{language === 'ta' ? 'மழை பாதிப்பை மதிப்பிடு' : 'Assess Rain Risk'}</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>

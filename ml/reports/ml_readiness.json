@@ -1,0 +1,98 @@
+{
+  "assessment_timestamp": "2026-09-26T13:50:05.645021",
+  "dataset_rows_inspected": 600,
+  "readiness_gate_status": "GATE_PASSED",
+  "target_assessments": {
+    "damage_class": {
+      "target_name": "damage_class",
+      "readiness_status": "LIMITED_ML",
+      "total_rows": 600,
+      "labelled_rows": 70,
+      "unlabelled_rows": 530,
+      "missing_rate_percentage": 88.33,
+      "label_sources": [
+        "NDMA_RELIEF_GROUND_TRUTH"
+      ],
+      "is_label_observed": true,
+      "class_distribution": {
+        "SLIGHT_DAMAGE": 42,
+        "SEVERE_DAMAGE": 21,
+        "NO_DAMAGE": 7
+      },
+      "geographic_coverage_districts": 10,
+      "crop_coverage_count": 9,
+      "growth_stage_coverage_count": 7,
+      "leakage_risk": "LOW",
+      "bias_risk": "MODERATE (Biased towards severe cyclone flood events in relief records)",
+      "scientific_reasoning": "Observed relief disaster data provides sufficient labelled samples for extreme events, but overall row coverage is low. Suitable for hybrid decision tree / Random Forest modeling combined with rule fallback."
+    },
+    "survival_class": {
+      "target_name": "survival_class",
+      "readiness_status": "LIMITED_ML",
+      "total_rows": 600,
+      "labelled_rows": 70,
+      "unlabelled_rows": 530,
+      "missing_rate_percentage": 88.33,
+      "label_sources": [
+        "NDMA_RELIEF_GROUND_TRUTH"
+      ],
+      "is_label_observed": true,
+      "class_distribution": {
+        "HIGH_SURVIVAL": 49,
+        "LOW_SURVIVAL": 21
+      },
+      "geographic_coverage_districts": 10,
+      "crop_coverage_count": 9,
+      "growth_stage_coverage_count": 7,
+      "leakage_risk": "LOW",
+      "bias_risk": "LOW",
+      "scientific_reasoning": "Physiological survival rates derived from ICAR/IRRI submergence trials provide good class balance for major crops (Paddy/Maize), but require physics-guided constraint checks."
+    },
+    "recovery_class": {
+      "target_name": "recovery_class",
+      "readiness_status": "RULE_BASED_ONLY",
+      "total_rows": 600,
+      "labelled_rows": 70,
+      "unlabelled_rows": 530,
+      "missing_rate_percentage": 88.33,
+      "label_sources": [
+        "NDMA_RELIEF_GROUND_TRUTH"
+      ],
+      "is_label_observed": false,
+      "class_distribution": {
+        "PARTIAL_RECOVERY": 42,
+        "UNRECOVERABLE": 21,
+        "FULL_RECOVERY": 7
+      },
+      "geographic_coverage_districts": 10,
+      "crop_coverage_count": 9,
+      "growth_stage_coverage_count": 7,
+      "leakage_risk": "HIGH (If predicted without longitudinal post-rain assessment)",
+      "bias_risk": "HIGH",
+      "scientific_reasoning": "Insufficient long-term longitudinal post-flood recovery observations in current dataset. Using evidence-based TNAU agronomic recovery rules is scientifically superior to training a speculative ML model."
+    },
+    "loss_class": {
+      "target_name": "loss_class",
+      "readiness_status": "RULE_BASED_ONLY",
+      "total_rows": 600,
+      "labelled_rows": 70,
+      "unlabelled_rows": 530,
+      "missing_rate_percentage": 88.33,
+      "label_sources": [
+        "NDMA_RELIEF_GROUND_TRUTH"
+      ],
+      "is_label_observed": true,
+      "class_distribution": {
+        "LOW_FINANCIAL_LOSS": 42,
+        "HIGH_FINANCIAL_LOSS": 21,
+        "NO_FINANCIAL_LOSS": 7
+      },
+      "geographic_coverage_districts": 10,
+      "crop_coverage_count": 9,
+      "growth_stage_coverage_count": 7,
+      "leakage_risk": "LOW",
+      "bias_risk": "HIGH",
+      "scientific_reasoning": "Financial crop loss values depend heavily on local MSP market prices and insurance claim formulas rather than direct weather features. Rule-based economic calculation required."
+    }
+  }
+}

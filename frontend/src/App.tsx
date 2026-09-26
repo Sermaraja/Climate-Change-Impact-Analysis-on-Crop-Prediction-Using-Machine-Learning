@@ -2,8 +2,12 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
 import { Layout } from './components/layout/Layout';
+import { ToastProvider } from './context/ToastContext';
+import { LandingPage } from './pages/LandingPage';
+import { Welcome } from './pages/Welcome';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
@@ -31,109 +35,124 @@ export const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Navigate to="/dashboard" replace />} />
-              <Route path="login" element={<Login />} />
-              <Route path="register" element={<Register />} />
-              
-              {/* Protected Routes */}
-              <Route
-                path="dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="farms"
-                element={
-                  <ProtectedRoute>
-                    <FarmsList />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="farms/new"
-                element={
-                  <ProtectedRoute>
-                    <FarmNew />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="farms/:id"
-                element={
-                  <ProtectedRoute>
-                    <FarmDetail />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="weather"
-                element={
-                  <ProtectedRoute>
-                    <Weather />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="rain-impact"
-                element={
-                  <ProtectedRoute>
-                    <RainImpact />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="recovery"
-                element={
-                  <ProtectedRoute>
-                    <Recovery />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="climate-analysis"
-                element={
-                  <ProtectedRoute>
-                    <ClimateAnalysis />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="history"
-                element={
-                  <ProtectedRoute>
-                    <History />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="reports"
-                element={
-                  <ProtectedRoute>
-                    <Reports />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="settings"
-                element={
-                  <ProtectedRoute>
-                    <Settings />
-                  </ProtectedRoute>
-                }
-              />
+        <ToastProvider>
+          <LanguageProvider>
+            <BrowserRouter>
+              <Routes>
+                {/* Public Entry Landing Page */}
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </QueryClientProvider>
+                {/* Protected Welcome Onboarding Route */}
+                <Route
+                  path="/welcome"
+                  element={
+                    <ProtectedRoute>
+                      <Welcome />
+                    </ProtectedRoute>
+                  }
+                />
+
+              {/* Protected Application Routes inside Dashboard Layout */}
+              <Route element={<Layout />}>
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/farms"
+                  element={
+                    <ProtectedRoute>
+                      <FarmsList />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/farms/new"
+                  element={
+                    <ProtectedRoute>
+                      <FarmNew />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/farms/:id"
+                  element={
+                    <ProtectedRoute>
+                      <FarmDetail />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/weather"
+                  element={
+                    <ProtectedRoute>
+                      <Weather />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/rain-impact"
+                  element={
+                    <ProtectedRoute>
+                      <RainImpact />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/recovery"
+                  element={
+                    <ProtectedRoute>
+                      <Recovery />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/climate-analysis"
+                  element={
+                    <ProtectedRoute>
+                      <ClimateAnalysis />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/history"
+                  element={
+                    <ProtectedRoute>
+                      <History />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/reports"
+                  element={
+                    <ProtectedRoute>
+                      <Reports />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute>
+                      <Settings />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </LanguageProvider>
+      </ToastProvider>
+    </AuthProvider>
+  </QueryClientProvider>
   );
 };
 

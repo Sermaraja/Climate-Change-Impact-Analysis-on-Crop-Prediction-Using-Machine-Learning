@@ -1,0 +1,27 @@
+{
+  "title": "Climate Change Trends",
+  "subtitle": "Long-term 30-year meteorological reanalysis, extreme precipitation shifts, and temperature anomalies.",
+  "select_farm": "Select Farm for Climate Analysis",
+  "period": "Period Analysed",
+  "data_source": "Data Source",
+  "methodology": "Statistical Methodology",
+  "summary_cards": {
+    "rain_trend": "Rainfall Trend / Decade",
+    "temp_trend": "Temperature Trend / Decade",
+    "heavy_days": "R50mm Heavy Rain Days",
+    "max_24h": "Max Recorded 24h Rain"
+  },
+  "charts": {
+    "annual_rainfall": "Annual Precipitation Trend (mm)",
+    "temp_avg": "Mean Annual Temperature (°C)",
+    "temp_max": "Extreme Maximum Temperature (°C)",
+    "heavy_days_chart": "Annual Frequency of Extreme Rain Days (>50mm)",
+    "seasonal": "Monsoonal & Seasonal Distribution",
+    "year": "Year",
+    "rainfall_mm": "Rainfall (mm)",
+    "temp_c": "Temperature (°C)",
+    "days": "Days"
+  },
+  "scientific_note": "Scientific Context",
+  "limitations": "Methodological Limitations & Model Assumptions"
+}

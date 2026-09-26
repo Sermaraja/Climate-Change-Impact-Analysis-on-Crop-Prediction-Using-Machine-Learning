@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0.0",
+  "date_created": "2026-09-26",
+  "feature_groups": {
+    "farm_crop": [
+      "crop",
+      "crop_variety",
+      "crop_age_days",
+      "growth_stage",
+      "season"
+    ],
+    "soil": [
+      "soil_type",
+      "sand_percentage",
+      "silt_percentage",
+      "clay_percentage",
+      "soil_moisture_surface",
+      "soil_moisture_rootzone",
+      "drainage_class",
+      "soil_source"
+    ],
+    "weather": [
+      "temperature",
+      "humidity"
+    ],
+    "rain": [
+      "rain_1h",
+      "rain_3h",
+      "rain_6h",
+      "rain_12h",
+      "rain_24h",
+      "rain_48h",
+      "previous_rain_24h",
+      "previous_rain_48h",
+      "previous_rain_72h",
+      "max_hourly_rain",
+      "continuous_rain_hours",
+      "rain_hours"
+    ],
+    "derived_indices": [
+      "antecedent_wetness_index",
+      "application_rain_risk",
+      "waterlogging_risk"
+    ],
+    "contextual": [
+      "official_warning_context"
+    ]
+  },
+  "target_fields": [
+    "damage_class",
+    "survival_class",
+    "recovery_class",
+    "loss_class"
+  ],
+  "metadata_fields": [
+    "date",
+    "farm_id",
+    "district",
+    "latitude",
+    "longitude",
+    "target_source"
+  ],
+  "non_leakage_rule": "official_warning_context is strictly a feature predictor and cannot overwrite farm-specific damage calculations."
+}

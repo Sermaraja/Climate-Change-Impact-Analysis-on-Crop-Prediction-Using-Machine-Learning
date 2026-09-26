@@ -1,0 +1,20 @@
+{
+  "required": "This field is required",
+  "invalid_email": "Please enter a valid email address",
+  "password_min": "Password must be at least 6 characters",
+  "name_min": "Full name must be at least 2 characters",
+  "farm_name_min": "Farm name must be at least 2 characters",
+  "draw_polygon": "Please draw a valid 3+ vertex polygon boundary on the map before saving.",
+  "select_crop": "Please select a valid crop from the catalog",
+  "select_stage": "Please select current growth stage",
+  "planting_date_required": "Please provide a valid planting date",
+  "server_error": "An unexpected error occurred. Please try again.",
+  "network_error": "Cannot connect to server. Please check your internet connection.",
+  "unauthorized": "Please sign in to access this feature.",
+  "farm_created": "Farm registered successfully!",
+  "farm_deleted": "Farm removed successfully.",
+  "crop_saved": "Crop profile saved successfully!",
+  "soil_saved": "Soil profile saved successfully!",
+  "assessment_submitted": "Post-rain assessment submitted successfully!",
+  "language_updated": "Language preference updated successfully."
+}

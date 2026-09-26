@@ -1,0 +1,136 @@
+{
+  "selected_model": "DecisionTree",
+  "test_accuracy": 1.0,
+  "test_f1": 1.0,
+  "candidate_results": {
+    "LogisticRegression": {
+      "accuracy": 0.9667,
+      "precision": 0.9679,
+      "recall": 0.9667,
+      "f1_score": 0.9596,
+      "confusion_matrix": [
+        [
+          8,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          77,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          1,
+          0
+        ],
+        [
+          0,
+          2,
+          0,
+          1
+        ]
+      ]
+    },
+    "DecisionTree": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "confusion_matrix": [
+        [
+          8,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          77,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          2,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          3
+        ]
+      ]
+    },
+    "RandomForest": {
+      "accuracy": 0.9667,
+      "precision": 0.9346,
+      "recall": 0.9667,
+      "f1_score": 0.9503,
+      "confusion_matrix": [
+        [
+          8,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          77,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          2,
+          0
+        ],
+        [
+          0,
+          3,
+          0,
+          0
+        ]
+      ]
+    },
+    "GradientBoosting": {
+      "accuracy": 0.9889,
+      "precision": 0.989,
+      "recall": 0.9889,
+      "f1_score": 0.9878,
+      "confusion_matrix": [
+        [
+          8,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          77,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          2,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          2
+        ]
+      ]
+    }
+  },
+  "note": "Software pipeline demo dataset training. Not for scientific publication."
+}

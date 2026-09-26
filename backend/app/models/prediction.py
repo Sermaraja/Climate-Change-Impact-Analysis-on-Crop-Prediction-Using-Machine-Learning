@@ -14,12 +14,15 @@ class WaterloggingPrediction(Base):
     estimated_stagnation_hours = Column(Float, nullable=False)
     saturation_index = Column(Float, nullable=False)
     risk_level = Column(SQLEnum(RiskLevelEnum, name="risklevelenum"), nullable=False, default=RiskLevelEnum.LOW)
+    input_snapshot_json = Column(Text, nullable=True)
+    model_version = Column(String(50), default="v1.0.0", nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # Relationships
     farm = relationship("Farm", back_populates="waterlogging_predictions")
     rain_event = relationship("RainEvent", back_populates="waterlogging_predictions")
     crop_damage_predictions = relationship("CropDamagePrediction", back_populates="waterlogging_prediction")
+
 
 
 class CropDamagePrediction(Base):

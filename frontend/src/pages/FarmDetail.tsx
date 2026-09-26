@@ -8,6 +8,9 @@ import { apiClient } from '../services/api';
 import type { FarmCropData } from '../types/crop';
 import { CropCard } from '../components/crops/CropCard';
 import { SoilCard } from '../components/soil/SoilCard';
+import { WaterloggingCard } from '../components/waterlogging/WaterloggingCard';
+import { CropDamageCard } from '../components/damage/CropDamageCard';
+
 
 
 export interface FarmDetailData {
@@ -142,6 +145,13 @@ export const FarmDetail: React.FC = () => {
 
       {/* Stage 6: Soil Profile Section */}
       <SoilCard farmId={farmId} />
+
+      {/* Stage 9 & Stage 11: Waterlogging Risk & ML Crop Damage Intelligence Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <WaterloggingCard farmId={farmId} />
+        <CropDamageCard farmId={farmId} />
+      </div>
+
 
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

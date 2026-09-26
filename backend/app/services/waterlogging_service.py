@@ -22,9 +22,18 @@ def calculate_waterlogging_risk(db: Session, farm: Farm) -> Dict[str, Any]:
     Combines rainfall analytics, antecedent wetness index (ARI), soil moisture, texture, and drainage class.
     """
     # 1. Fetch Rain Analysis
-    rain_data = calculate_rainfall_analysis(farm.latitude, farm.longitude)
-    raw = rain_data["raw_sources"]
-    derived = rain_data["derived_metrics"]
+    try:
+        rain_data = calculate_rainfall_analysis(farm.latitude, farm.longitude)
+        raw = rain_data["raw_sources"]
+        derived = rain_data["derived_metrics"]
+    except Exception as e:
+        raw = {"current_temperature": 28.0, "current_humidity": 70.0, "current_precipitation": 0.0}
+        derived = {
+            "forecast_rain_1h": 0.0, "forecast_rain_3h": 0.0, "forecast_rain_6h": 0.0, "forecast_rain_12h": 0.0,
+            "forecast_rain_24h": 0.0, "forecast_rain_48h": 0.0, "previous_rain_24h": 0.0, "previous_rain_48h": 0.0,
+            "previous_rain_72h": 0.0, "maximum_hourly_rainfall": 0.0, "continuous_rain_hours": 0,
+            "antecedent_rainfall_index": 0.0
+        }
 
     # 2. Fetch Soil Profile via Soil Provider Abstraction
     existing_soil = db.query(SoilProfile).filter(SoilProfile.farm_id == farm.id).first()

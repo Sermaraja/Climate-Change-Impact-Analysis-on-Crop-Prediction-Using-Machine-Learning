@@ -20,6 +20,7 @@ export interface FarmImpactFeature {
     growth_stage?: string;
     growth_stage_source?: string;
     crop_age_days?: number;
+    stage_vulnerability?: string;
   };
   crop_impact_analysis?: {
     application_impact_level: string; // GREEN, YELLOW, ORANGE, RED
@@ -28,13 +29,27 @@ export interface FarmImpactFeature {
     survival_potential?: string;
     recovery_potential?: string;
     crop_loss_risk?: string;
+    engine_type?: string;
+    model_version?: string;
   };
   waterlogging_analysis?: {
     risk_level?: string;
+    soil_saturation_pct?: number;
+    estimated_standing_water_hours?: number;
   };
   weather_metrics?: {
     forecast_rain_24h_mm?: number;
+    forecast_rain_48h_mm?: number;
     previous_rain_48h_mm?: number;
+    temperature_c?: number;
+    humidity_pct?: number;
+  };
+  soil_profile?: {
+    soil_type?: string;
+    clay_percentage?: number;
+    sand_percentage?: number;
+    drainage_class?: string;
+    soil_source?: string;
   };
   status_message?: string;
 }

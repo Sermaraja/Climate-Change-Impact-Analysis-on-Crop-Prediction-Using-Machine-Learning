@@ -205,6 +205,8 @@ def scan_single_farm_impact(db: Session, farm: Farm) -> Dict[str, Any]:
     crop_age_days = (date.today() - active_crop.planting_date).days if active_crop.planting_date else 0
 
     # Growth stage: USER_CONFIRMED vs ESTIMATED
+    from app.services.crop_service import estimate_growth_stage
+
     if active_crop.user_stage_override:
         growth_stage = active_crop.user_stage_override
         growth_stage_source = "USER_CONFIRMED"
@@ -212,13 +214,20 @@ def scan_single_farm_impact(db: Session, farm: Farm) -> Dict[str, Any]:
         growth_stage = active_crop.current_growth_stage.stage_name
         growth_stage_source = "ESTIMATED"
     else:
-        growth_stage = "Vegetative"
+        growth_stage = estimate_growth_stage(db, active_crop.crop_id, crop_age_days)
         growth_stage_source = "ESTIMATED"
 
-    # Stage vulnerability
+    # Stage vulnerability from growth stages table
     stage_vuln = "MODERATE"
-    if active_crop.current_growth_stage:
-        stage_vuln = active_crop.current_growth_stage.flood_vulnerability_level or "MODERATE"
+    stage_obj = (
+        db.query(CropGrowthStage)
+        .filter(CropGrowthStage.crop_id == active_crop.crop_id, CropGrowthStage.stage_name == growth_stage)
+        .first()
+    )
+    if stage_obj and stage_obj.flood_vulnerability_level:
+        stage_vuln = stage_obj.flood_vulnerability_level
+    elif active_crop.current_growth_stage and active_crop.current_growth_stage.flood_vulnerability_level:
+        stage_vuln = active_crop.current_growth_stage.flood_vulnerability_level
 
     # Soil profile resolution
     existing_soil = db.query(SoilProfile).filter(SoilProfile.farm_id == farm.id).first()
@@ -359,6 +368,27 @@ def scan_single_farm_impact(db: Session, farm: Farm) -> Dict[str, Any]:
         "village": farm.village,
         "boundary_geojson": boundary_geojson,
         "has_crop": True,
+        # Flat convenience attributes
+        "crop_name": crop_name,
+        "variety_name": variety_name,
+        "crop_age_days": crop_age_days,
+        "growth_stage": growth_stage,
+        "growth_stage_source": growth_stage_source,
+        "stage_vulnerability": stage_vuln,
+        "soil_type": soil.soil_type or "Clay Loam",
+        "drainage_class": drainage_class,
+        "forecast_rain_24h": derived["forecast_rain_24h"],
+        "forecast_rain_48h": derived["forecast_rain_48h"],
+        "previous_rain_72h": derived["previous_rain_48h"],
+        "waterlogging_risk": waterlogging_res.get("risk_level", "LOW"),
+        "crop_damage_risk": impact_res.get("crop_damage_risk", "LOW"),
+        "survival_potential": impact_res.get("survival_potential", "HIGH"),
+        "recovery_potential": impact_res.get("recovery_potential", "HIGH"),
+        "crop_loss_risk": impact_res.get("crop_loss_risk", "LOW"),
+        "application_impact_level": app_impact_level,
+        "contributing_factors": contributing_factors,
+        "recommendations": recommendations,
+        # Detailed structured sections
         "active_crop": {
             "id": active_crop.id,
             "crop_name": crop_name,

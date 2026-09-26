@@ -68,10 +68,13 @@ def run_crop_damage_inference(db: Session, farm: Farm) -> Dict[str, Any]:
     if not active_crop:
         raise ValueError("No active crop profile registered for this farm. Assign a crop first.")
 
+    from datetime import date
+    from app.services.crop_service import estimate_growth_stage
+
     crop_name = active_crop.crop.name if active_crop.crop else "Paddy"
     variety_name = active_crop.variety.variety_name if active_crop.variety else "Default"
-    growth_stage = active_crop.user_stage_override or "Vegetative"
-    crop_age_days = (active_crop.planting_date).day
+    crop_age_days = (date.today() - active_crop.planting_date).days if active_crop.planting_date else 0
+    growth_stage = active_crop.user_stage_override or estimate_growth_stage(db, active_crop.crop_id, crop_age_days)
 
     # 2. Fetch Soil & Waterlogging Risk
     existing_soil = db.query(SoilProfile).filter(SoilProfile.farm_id == farm.id).first()

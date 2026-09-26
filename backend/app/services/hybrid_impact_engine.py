@@ -117,14 +117,29 @@ class HybridCropImpactEngine:
         )
 
         # 4. Integrate Rules & ML Predictions (Physical Boundary Constraints)
+        # 4. Integrate Rules & ML Predictions (Physical Boundary Constraints)
         wl_risk = waterlogging_res.get("risk_level", "LOW")
         rain_48h = weather_data.get("rain_48h", 0.0)
-        drainage = soil_data.get("drainage_class", "MODERATE")
+        drainage = (soil_data.get("drainage_class") or "MODERATE").upper()
         growth_stage = crop_data.get("growth_stage", "Vegetative")
 
-        # Map Damage Risk
-        if wl_risk == "CRITICAL" or rain_48h > 120.0 or (crop_name in ["Tomato", "Chilli"] and rain_48h > 50.0):
+        # Crop-specific sensitivity thresholds
+        is_sensitive_stage = any(
+            kw in growth_stage.lower()
+            for kw in ["flowering", "boll", "pegging", "pod", "silking", "tasseling", "seedling"]
+        )
+
+        # Map Damage Risk with scientific crop & stage vulnerability
+        if wl_risk == "CRITICAL" or rain_48h > 120.0:
             crop_damage_risk = "SEVERE"
+        elif crop_name in ["Tomato", "Chilli"] and (rain_48h > 45.0 or wl_risk in ["HIGH", "CRITICAL"]):
+            crop_damage_risk = "SEVERE"
+        elif crop_name == "Cotton" and is_sensitive_stage and (wl_risk in ["HIGH", "CRITICAL"] or (drainage in ["POOR", "VERY_POOR"] and rain_48h > 40.0)):
+            crop_damage_risk = "SEVERE" if wl_risk == "CRITICAL" or rain_48h > 65.0 else "HIGH"
+        elif crop_name == "Groundnut" and is_sensitive_stage and (wl_risk in ["HIGH", "CRITICAL"] or (drainage in ["POOR", "VERY_POOR"] and rain_48h > 35.0)):
+            crop_damage_risk = "SEVERE" if wl_risk == "CRITICAL" or rain_48h > 60.0 else "HIGH"
+        elif crop_name == "Maize" and is_sensitive_stage and (wl_risk in ["HIGH", "CRITICAL"] or rain_48h > 55.0):
+            crop_damage_risk = "HIGH"
         elif wl_risk == "HIGH" or rain_48h > 70.0:
             crop_damage_risk = "HIGH"
         elif wl_risk == "MODERATE" or rain_48h > 35.0:
@@ -138,29 +153,33 @@ class HybridCropImpactEngine:
         elif ml_predicted_damage == "NO_DAMAGE" and "Sub1" in variety_name:
             crop_damage_risk = "LOW"
 
-        # Survival Potential
+        # Survival Potential (Scientific classification: HIGH / MODERATE / LOW)
         if crop_damage_risk == "SEVERE":
             survival_potential = "LOW"
         elif crop_damage_risk == "HIGH":
-            survival_potential = "MEDIUM"
+            survival_potential = "MODERATE"
         else:
             survival_potential = "HIGH"
 
-        # Recovery Potential (TNAU Evidence-based)
-        if crop_damage_risk == "SEVERE" and crop_name in ["Tomato", "Chilli", "Maize"]:
+        # Recovery Potential (TNAU & ICAR Evidence-based)
+        if crop_damage_risk == "SEVERE" and crop_name in ["Tomato", "Chilli", "Maize", "Cotton", "Groundnut"]:
             recovery_potential = "LOW"
         elif "Sub1" in variety_name or (crop_name == "Paddy" and wl_risk != "CRITICAL"):
             recovery_potential = "HIGH"
+        elif crop_damage_risk == "HIGH" and (crop_name in ["Cotton", "Groundnut"] and drainage in ["POOR", "VERY_POOR"]):
+            recovery_potential = "LOW"
         elif crop_damage_risk in ["MODERATE", "HIGH"]:
-            recovery_potential = "MEDIUM"
+            recovery_potential = "MODERATE"
         else:
             recovery_potential = "HIGH"
 
-        # Crop Loss Risk
+        # Crop Loss Risk (Scientific classification: HIGH / MODERATE / LOW)
         if crop_damage_risk in ["SEVERE", "HIGH"] and recovery_potential == "LOW":
             crop_loss_risk = "HIGH"
-        elif crop_damage_risk in ["HIGH", "MODERATE"] and recovery_potential == "MEDIUM":
+        elif crop_damage_risk in ["HIGH", "MODERATE"] and recovery_potential == "MODERATE":
             crop_loss_risk = "MODERATE"
+        elif crop_damage_risk == "SEVERE":
+            crop_loss_risk = "HIGH"
         else:
             crop_loss_risk = "LOW"
 

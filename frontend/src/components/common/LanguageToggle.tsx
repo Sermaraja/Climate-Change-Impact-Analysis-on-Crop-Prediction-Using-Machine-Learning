@@ -3,7 +3,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { Globe, Check, ChevronDown } from 'lucide-react';
 
 interface LanguageToggleProps {
-  variant?: 'pill' | 'dropdown' | 'compact';
+  variant?: 'pill' | 'dropdown' | 'compact' | 'light';
   className?: string;
 }
 
@@ -55,6 +55,41 @@ export const LanguageToggle: React.FC<LanguageToggleProps> = ({ variant = 'pill'
           title="தமிழுக்கு மாற்றவும்"
         >
           <span>தமிழ்</span>
+        </button>
+      </div>
+    );
+  }
+
+  if (variant === 'light') {
+    return (
+      <div
+        className={`inline-flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 ${className}`}
+        role="group"
+        aria-label="Language selection"
+      >
+        <button
+          type="button"
+          onClick={() => setLanguage('en')}
+          className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+            language === 'en'
+              ? 'bg-white text-emerald-700 shadow-sm border border-slate-200'
+              : 'text-slate-500 hover:text-slate-800'
+          }`}
+          aria-pressed={language === 'en'}
+        >
+          English
+        </button>
+        <button
+          type="button"
+          onClick={() => setLanguage('ta')}
+          className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+            language === 'ta'
+              ? 'bg-white text-emerald-700 shadow-sm border border-slate-200'
+              : 'text-slate-500 hover:text-slate-800'
+          }`}
+          aria-pressed={language === 'ta'}
+        >
+          தமிழ்
         </button>
       </div>
     );

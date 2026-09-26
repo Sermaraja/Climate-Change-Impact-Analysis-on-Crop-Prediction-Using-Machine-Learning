@@ -30,7 +30,7 @@ def format_alert_response(alert: FarmImpactAlert) -> Dict[str, Any]:
         "id": alert.id,
         "farm_id": alert.farm_id,
         "farm_name": farm.farm_name if farm else "Unknown Farm",
-        "location": f"{farm.district or ''}, {farm.state or ''}".strip(", "),
+        "location": f"{farm.district or ''}, {farm.state or ''}".strip(", ") if farm else "N/A",
         "crop_name": crop_name,
         "growth_stage": growth_stage,
         "application_impact_level": alert.application_impact_level,

@@ -7,6 +7,8 @@ import { MapPin, Sprout, Trash2, ArrowLeft, Loader2, AlertCircle, ShieldAlert } 
 import { apiClient } from '../services/api';
 import type { FarmCropData } from '../types/crop';
 import { CropCard } from '../components/crops/CropCard';
+import { SoilCard } from '../components/soil/SoilCard';
+
 
 export interface FarmDetailData {
   id: number;
@@ -137,6 +139,10 @@ export const FarmDetail: React.FC = () => {
 
       {/* Stage 5: Crop Profile & Growth Stage Section */}
       <CropCard farmId={farmId} crop={farmCrop || null} onRefresh={refetchCrop} />
+
+      {/* Stage 6: Soil Profile Section */}
+      <SoilCard farmId={farmId} />
+
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Farm Metadata Card */}

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Enum as SQLEnum, DateTime, func
+from sqlalchemy import Column, Integer, String, Float, Text, ForeignKey, Enum as SQLEnum, DateTime, func
 from sqlalchemy.orm import relationship
 from app.database import Base
 from app.models.enums import SoilSourceEnum
@@ -15,6 +15,8 @@ class SoilProfile(Base):
     clay_percentage = Column(Float, nullable=True)
     ph = Column(Float, nullable=True)
     organic_carbon = Column(Float, nullable=True)
+    bulk_density = Column(Float, nullable=True)
+    notes = Column(Text, nullable=True)
     soil_source = Column(SQLEnum(SoilSourceEnum, name="soilsourceenum"), nullable=False, default=SoilSourceEnum.ESTIMATED)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=True)

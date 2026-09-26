@@ -19,11 +19,29 @@ class Settings(BaseSettings):
     )
 
     # CORS
+    FRONTEND_URL: str = os.getenv("FRONTEND_URL", "")
     BACKEND_CORS_ORIGINS: list[str] = [
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://localhost:3000",
     ]
+
+    @property
+    def sync_database_url(self) -> str:
+        url = self.DATABASE_URL
+        if url and url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql://", 1)
+        return url
+
+    @property
+    def cors_origins(self) -> list[str]:
+        origins = list(self.BACKEND_CORS_ORIGINS)
+        if self.FRONTEND_URL and self.FRONTEND_URL.strip():
+            for raw_origin in self.FRONTEND_URL.split(","):
+                clean = raw_origin.strip().rstrip("/")
+                if clean and clean not in origins:
+                    origins.append(clean)
+        return origins
 
     model_config = SettingsConfigDict(
         env_file=".env",

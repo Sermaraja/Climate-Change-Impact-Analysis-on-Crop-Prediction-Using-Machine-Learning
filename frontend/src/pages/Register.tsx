@@ -40,14 +40,39 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 /* ─── Slides ─────────────────────────────────────────────────────────────── */
 const SLIDES = [
-  { img: slide2, caption: 'Cotton Harvest', sub: 'Traditional hand-picking — Virudhunagar, TN' },
-  { img: slide3, caption: 'Smart Farming', sub: 'Real-time crop monitoring during the monsoon' },
-  { img: slide1, caption: 'Cauvery Delta', sub: 'Paddy fields at golden hour — Thanjavur, TN' },
-  { img: slide4, caption: 'Village Sunrise', sub: 'Canal-fed paddy fields at dawn' },
+  {
+    img: slide2,
+    captionEn: 'Cotton Harvest',
+    captionTa: 'பருத்தி அறுவடை',
+    subEn: 'Traditional hand-picking — Virudhunagar, TN',
+    subTa: 'பாரம்பரிய கை அறுவடை — விருதுநகர், தமிழ்நாடு',
+  },
+  {
+    img: slide3,
+    captionEn: 'Smart Farming',
+    captionTa: 'துல்லிய விவசாயம்',
+    subEn: 'Real-time crop monitoring during the monsoon',
+    subTa: 'பருவமழை காலத்தில் நிகழ்நேர பயிர் கண்காணிப்பு',
+  },
+  {
+    img: slide1,
+    captionEn: 'Cauvery Delta',
+    captionTa: 'காவிரி டெல்டா',
+    subEn: 'Paddy fields at golden hour — Thanjavur, TN',
+    subTa: 'பொன்மாலையில் நெல் வயல்கள் — தஞ்சாவூர், தமிழ்நாடு',
+  },
+  {
+    img: slide4,
+    captionEn: 'Village Sunrise',
+    captionTa: 'கிராம விடியல்',
+    subEn: 'Canal-fed paddy fields at dawn',
+    subTa: 'விடியற்காலை வாய்க்கால் பாசன நெல் வயல்கள்',
+  },
 ];
 
 /* ─── Slider ─────────────────────────────────────────────────────────────── */
 function FarmSlider() {
+  const { language } = useLanguage();
   const [active, setActive] = useState(0);
   const [fading, setFading] = useState(false);
 
@@ -61,12 +86,22 @@ function FarmSlider() {
     return () => clearInterval(t);
   }, [active, goTo]);
 
+  const caption = language === 'ta' ? SLIDES[active].captionTa : SLIDES[active].captionEn;
+  const sub = language === 'ta' ? SLIDES[active].subTa : SLIDES[active].subEn;
+
+  const featurePills = [
+    { icon: '🌧', label: language === 'ta' ? 'மழை பாதிப்பு பகுப்பாய்வு' : 'Rainfall Impact Analysis' },
+    { icon: '🌾', label: language === 'ta' ? 'பயிர் வளர்ச்சி நிலை கணிப்பு' : 'Crop Stage Intelligence' },
+    { icon: '💧', label: language === 'ta' ? 'நீர் தேக்க அபாய இயந்திரம்' : 'Waterlogging Risk Engine' },
+    { icon: '📊', label: language === 'ta' ? 'ML பயிர் சேத முன்னறிவிப்பு' : 'ML Damage Prediction' },
+  ];
+
   return (
     <div className="relative w-full h-full overflow-hidden rounded-[24px] lg:rounded-r-[28px] lg:rounded-l-none select-none">
       <img
         key={active}
         src={SLIDES[active].img}
-        alt={SLIDES[active].caption}
+        alt={caption}
         className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
         style={{ opacity: fading ? 0 : 1 }}
         draggable={false}
@@ -81,12 +116,7 @@ function FarmSlider() {
 
       {/* Feature pills — mid-panel */}
       <div className="absolute top-1/2 -translate-y-1/2 left-4 space-y-2" style={{ opacity: fading ? 0 : 1, transition: 'opacity 0.5s' }}>
-        {[
-          { icon: '🌧', label: 'Rainfall Impact Analysis' },
-          { icon: '🌾', label: 'Crop Stage Intelligence' },
-          { icon: '💧', label: 'Waterlogging Risk Engine' },
-          { icon: '📊', label: 'ML Damage Prediction' },
-        ].map((f) => (
+        {featurePills.map((f) => (
           <div key={f.label} className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/15">
             <span className="text-sm">{f.icon}</span>
             <span className="text-[11px] text-white font-semibold">{f.label}</span>
@@ -96,8 +126,8 @@ function FarmSlider() {
 
       {/* Caption */}
       <div className="absolute bottom-0 left-0 right-0 px-6 pb-7 pt-4" style={{ opacity: fading ? 0 : 1, transition: 'opacity 0.5s' }}>
-        <p className="text-white font-extrabold text-lg leading-tight drop-shadow-lg">{SLIDES[active].caption}</p>
-        <p className="text-white/75 text-xs font-medium mt-0.5 drop-shadow">{SLIDES[active].sub}</p>
+        <p className="text-white font-extrabold text-lg leading-tight drop-shadow-lg">{caption}</p>
+        <p className="text-white/75 text-xs font-medium mt-0.5 drop-shadow">{sub}</p>
         <div className="flex items-center gap-2 mt-3">
           {SLIDES.map((_, i) => (
             <button
@@ -123,6 +153,7 @@ function FarmSlider() {
     </div>
   );
 }
+
 
 /* ─── Reusable light input ───────────────────────────────────────────────── */
 function LightInput(props: React.InputHTMLAttributes<HTMLInputElement> & { hasError?: boolean }) {
@@ -185,9 +216,9 @@ export const Register: React.FC = () => {
   };
 
   const benefits = [
-    'Farm-specific rainfall & waterlogging risk',
-    'Crop stage damage prediction using ML',
-    'Real-time alerts & agronomic action guide',
+    language === 'ta' ? 'பண்ணை சார்ந்த மழை & நீர் தேக்க அபாயம்' : 'Farm-specific rainfall & waterlogging risk',
+    language === 'ta' ? 'ML அடிப்படையிலான பயிர் சேத கணிப்பு' : 'Crop stage damage prediction using ML',
+    language === 'ta' ? 'நிகழ்நேர எச்சரிக்கைகள் & வேளாண் செயல் வழிகாட்டி' : 'Real-time alerts & agronomic action guide',
   ];
 
   return (
@@ -362,7 +393,11 @@ export const Register: React.FC = () => {
                     <div key={i} className="h-1 flex-1 rounded-full bg-slate-200" />
                   ))}
                 </div>
-                <p className="text-[10px] text-slate-400">Minimum 6 characters. Use a mix of letters and numbers for a stronger password.</p>
+                <p className="text-[10px] text-slate-400">
+                  {language === 'ta'
+                    ? 'குறைந்தபட்சம் 6 எழுத்துகள். எழுத்துகள் மற்றும் எண்களைக் கலந்து பயன்படுத்தவும்.'
+                    : 'Minimum 6 characters. Use a mix of letters and numbers for a stronger password.'}
+                </p>
               </div>
 
               {/* Submit */}
@@ -388,10 +423,21 @@ export const Register: React.FC = () => {
 
               {/* Terms note */}
               <p className="text-[10px] text-slate-400 leading-relaxed">
-                By creating an account you agree to our{' '}
-                <span className="text-emerald-600 font-semibold cursor-pointer hover:underline">Terms of Service</span>
-                {' '}and{' '}
-                <span className="text-emerald-600 font-semibold cursor-pointer hover:underline">Privacy Policy</span>.
+                {language === 'ta' ? (
+                  <>
+                    கணக்கை உருவாக்குவதன் மூலம் எங்கள்{' '}
+                    <span className="text-emerald-600 font-semibold cursor-pointer hover:underline">சேவை விதிமுறைகள்</span>
+                    {' '}மற்றும்{' '}
+                    <span className="text-emerald-600 font-semibold cursor-pointer hover:underline">தனியுரிமைக் கொள்கையை</span> ஏற்கிறீர்கள்.
+                  </>
+                ) : (
+                  <>
+                    By creating an account you agree to our{' '}
+                    <span className="text-emerald-600 font-semibold cursor-pointer hover:underline">Terms of Service</span>
+                    {' '}and{' '}
+                    <span className="text-emerald-600 font-semibold cursor-pointer hover:underline">Privacy Policy</span>.
+                  </>
+                )}
               </p>
             </form>
           </div>
@@ -416,7 +462,9 @@ export const Register: React.FC = () => {
         <div className="lg:hidden h-40 relative overflow-hidden" aria-hidden="true">
           <img src={SLIDES[1].img} alt="Tamil Nadu Farm" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end px-5 pb-4">
-            <span className="text-white text-xs font-bold drop-shadow">Cotton Harvest — CropClimate AI</span>
+            <span className="text-white text-xs font-bold drop-shadow">
+              {language === 'ta' ? 'பருத்தி அறுவடை — CropClimate AI' : 'Cotton Harvest — CropClimate AI'}
+            </span>
           </div>
         </div>
       </div>

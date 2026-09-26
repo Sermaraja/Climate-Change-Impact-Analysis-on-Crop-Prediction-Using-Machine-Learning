@@ -14,7 +14,7 @@ app = FastAPI(
 # Set up CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -30,4 +30,13 @@ def root():
         "message": "Welcome to Climate Change Impact Analysis API",
         "docs": "/docs",
         "health": "/api/health"
+    }
+
+
+@app.get("/health", tags=["Health"])
+def health_probe():
+    return {
+        "status": "healthy",
+        "application": settings.PROJECT_NAME,
+        "version": settings.VERSION
     }

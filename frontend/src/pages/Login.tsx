@@ -36,28 +36,37 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const SLIDES = [
   {
     img: slide1,
-    caption: 'Cauvery Delta',
-    sub: 'Paddy fields at golden hour — Thanjavur, Tamil Nadu',
+    captionEn: 'Cauvery Delta',
+    captionTa: 'காவிரி டெல்டா',
+    subEn: 'Paddy fields at golden hour — Thanjavur, Tamil Nadu',
+    subTa: 'பொன்மாலையில் நெல் வயல்கள் — தஞ்சாவூர், தமிழ்நாடு',
   },
   {
     img: slide2,
-    caption: 'Cotton Harvest',
-    sub: 'Traditional hand-picking — Virudhunagar, Tamil Nadu',
+    captionEn: 'Cotton Harvest',
+    captionTa: 'பருத்தி அறுவடை',
+    subEn: 'Traditional hand-picking — Virudhunagar, Tamil Nadu',
+    subTa: 'பாரம்பரிய கை அறுவடை — விருதுநகர், தமிழ்நாடு',
   },
   {
     img: slide3,
-    caption: 'Smart Farming',
-    sub: 'Real-time crop monitoring during the monsoon',
+    captionEn: 'Smart Farming',
+    captionTa: 'துல்லிய விவசாயம்',
+    subEn: 'Real-time crop monitoring during the monsoon',
+    subTa: 'பருவமழை காலத்தில் நிகழ்நேர பயிர் கண்காணிப்பு',
   },
   {
     img: slide4,
-    caption: 'Village Sunrise',
-    sub: 'Canal-fed paddy fields at dawn — Cauvery Delta',
+    captionEn: 'Village Sunrise',
+    captionTa: 'கிராம விடியல்',
+    subEn: 'Canal-fed paddy fields at dawn — Cauvery Delta',
+    subTa: 'விடியற்காலை வாய்க்கால் பாசன நெல் வயல்கள் — காவிரி டெல்டா',
   },
 ];
 
 /* ─── Image Slider ───────────────────────────────────────────────────────── */
 function FarmSlider() {
+  const { language } = useLanguage();
   const [active, setActive] = useState(0);
   const [fading, setFading] = useState(false);
 
@@ -80,13 +89,16 @@ function FarmSlider() {
   const prev = () => goTo((active - 1 + SLIDES.length) % SLIDES.length);
   const next = () => goTo((active + 1) % SLIDES.length);
 
+  const caption = language === 'ta' ? SLIDES[active].captionTa : SLIDES[active].captionEn;
+  const sub = language === 'ta' ? SLIDES[active].subTa : SLIDES[active].subEn;
+
   return (
     <div className="relative w-full h-full overflow-hidden rounded-[24px] lg:rounded-r-[28px] lg:rounded-l-none select-none">
       {/* Image */}
       <img
         key={active}
         src={SLIDES[active].img}
-        alt={SLIDES[active].caption}
+        alt={caption}
         className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
         style={{ opacity: fading ? 0 : 1 }}
         draggable={false}
@@ -113,10 +125,10 @@ function FarmSlider() {
         style={{ opacity: fading ? 0 : 1 }}
       >
         <p className="text-white font-extrabold text-lg leading-tight drop-shadow-lg">
-          {SLIDES[active].caption}
+          {caption}
         </p>
         <p className="text-white/75 text-xs font-medium mt-0.5 drop-shadow">
-          {SLIDES[active].sub}
+          {sub}
         </p>
 
         {/* Dot indicators */}
@@ -186,7 +198,7 @@ export const Login: React.FC = () => {
   const location = useLocation();
   const { login } = useAuth();
   const { showToast } = useToast();
-  const { t, setLanguage } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const [serverError, setServerError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -419,7 +431,7 @@ export const Login: React.FC = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end px-5 pb-4">
             <span className="text-white text-xs font-bold drop-shadow">
-              Cauvery Delta — CropClimate AI
+              {language === 'ta' ? 'காவிரி டெல்டா — CropClimate AI' : 'Cauvery Delta — CropClimate AI'}
             </span>
           </div>
         </div>

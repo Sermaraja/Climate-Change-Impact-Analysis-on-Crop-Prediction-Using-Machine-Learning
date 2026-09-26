@@ -72,8 +72,8 @@ function impactColor(level: string) {
 }
 
 function riskDot(level: string) {
-  if (level === 'HIGH' || level === 'SEVERE' || level === 'EXTREME') return 'bg-red-500';
-  if (level === 'MODERATE' || level === 'MEDIUM') return 'bg-yellow-400';
+  if (level === 'HIGH' || level === 'SEVERE' || level === 'EXTREME' || level === 'CRITICAL') return 'bg-red-500';
+  if (level === 'MODERATE' || level === 'MEDIUM' || level === 'ELEVATED') return 'bg-yellow-400';
   return 'bg-emerald-500';
 }
 
@@ -99,7 +99,7 @@ function RainfallMiniChart({ data }: { data: number[] }) {
 }
 
 // ─── Stage progress ring ──────────────────────────────────────────────────────
-function StageRing({ pct, label, days }: { pct: number; label: string; days: number }) {
+function StageRing({ pct, label, days, daysLabel }: { pct: number; label: string; days: number; daysLabel: string }) {
   const r = 28, cx = 36, cy = 36, circ = 2 * Math.PI * r;
   const dash = (pct / 100) * circ;
   return (
@@ -110,7 +110,7 @@ function StageRing({ pct, label, days }: { pct: number; label: string; days: num
           strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
           transform={`rotate(-90 ${cx} ${cy})`} />
         <text x={cx} y={cy - 3} textAnchor="middle" className="text-[10px] font-extrabold fill-slate-900" fontSize="11" fontWeight="800">{days}d</text>
-        <text x={cx} y={cy + 9} textAnchor="middle" fontSize="7" fontWeight="600" className="fill-slate-400">old</text>
+        <text x={cx} y={cy + 9} textAnchor="middle" fontSize="7" fontWeight="600" className="fill-slate-400">{daysLabel}</text>
       </svg>
       <span className="text-[9px] text-center font-semibold text-slate-500 leading-tight max-w-[72px]">{label}</span>
     </div>
@@ -131,12 +131,12 @@ function MetricPill({ label, value, dot }: { label: string; value: string; dot: 
 // ─── Action card ─────────────────────────────────────────────────────────────
 function ActionCard({ act, color }: { act: any; color: string }) {
   return (
-    <div className={`p-3 rounded-xl border text-xs space-y-0.5 ${color}`}>
+    <div className={`p-3 rounded-xl border text-xs space-y-1 ${color}`}>
       <strong className="block text-slate-900 font-bold leading-tight">{act.title}</strong>
-      <p className="text-slate-600 leading-relaxed">{act.action}</p>
+      <p className="text-slate-600 leading-relaxed text-[11px]">{act.action}</p>
       {act.timing && (
-        <span className="inline-flex items-center gap-0.5 text-[10px] text-slate-400 font-medium mt-0.5">
-          <Clock className="w-2.5 h-2.5" /> {act.timing}
+        <span className="inline-flex items-center gap-0.5 text-[10px] text-slate-500 font-medium mt-0.5">
+          <Clock className="w-2.5 h-2.5 text-slate-400" /> {act.timing}
         </span>
       )}
     </div>
@@ -146,7 +146,21 @@ function ActionCard({ act, color }: { act: any; color: string }) {
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { translateCrop, translateStage, translateRisk } = useLanguage();
+  const {
+    t,
+    language,
+    translateCrop,
+    translateStage,
+    translateSoilType,
+    translateDrainage,
+    translateRisk,
+    translateFactor,
+    translateWhyStatement,
+    translateActionCard,
+    translateTechnicalFeature,
+    translateGreeting,
+    translateWeatherWarning,
+  } = useLanguage();
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
@@ -157,7 +171,7 @@ export const Dashboard: React.FC = () => {
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [analysisStepIndex, setAnalysisStepIndex] = useState<number>(0);
 
-  const scanSteps = [
+  const rawScanSteps = [
     'Checking farm locations…',
     'Retrieving weather data…',
     'Analysing rainfall…',
@@ -182,7 +196,8 @@ export const Dashboard: React.FC = () => {
 
   const allFarmsImpact: FarmImpactFeature[] = scanData?.farms || [];
   const impactSummary = scanData?.summary || { farms_total: farms.length, farms_analysed: 0, farms_requiring_attention: 0, severe_count: 0, high_count: 0, elevated_count: 0, low_count: 0 };
-  const officialWarning = scanData?.official_weather_warning;
+  const rawOfficialWarning = scanData?.official_weather_warning;
+  const officialWarning = translateWeatherWarning(rawOfficialWarning);
 
   const activeFarm = (selectedFarmId ? farms.find(f => f.id === selectedFarmId) : null) || farms[0] || null;
   const activeFarmImpact = (selectedFarmId ? allFarmsImpact.find(f => f.farm_id === selectedFarmId) : null) || allFarmsImpact[0] || null;
@@ -201,7 +216,7 @@ export const Dashboard: React.FC = () => {
   const analyseAllMutation = useMutation({
     mutationFn: async () => {
       setIsScanning(true);
-      for (let i = 0; i < scanSteps.length; i++) {
+      for (let i = 0; i < rawScanSteps.length; i++) {
         setAnalysisStepIndex(i);
         await new Promise(r => setTimeout(r, 320));
       }
@@ -234,7 +249,7 @@ export const Dashboard: React.FC = () => {
   // Estimate % progress through season (rough 120-day season)
   const stagePct = Math.min(100, Math.round((cropAgeDays / 120) * 100));
 
-  // Rainfall bar chart data from forecast (mock hourly pattern for now)
+  // Rainfall bar chart data from forecast
   const rainBars = Array.from({ length: 16 }, (_, i) =>
     i < 8 ? ((metrics?.forecast_rain_24h as number) || 0) / 8 : ((metrics?.forecast_rain_48h as number) || 0) / 8
   );
@@ -246,20 +261,20 @@ export const Dashboard: React.FC = () => {
   const duringActions = (fi as any)?.recommended_actions?.during_rain || [];
   const afterActions = (fi as any)?.recommended_actions?.after_rain || [];
 
-  // Recent history mock from all farms
   const recentHistory = allFarmsImpact.slice(0, 3).map(f => ({
     farm: f.farm_name,
     crop: f.active_crop?.crop_name || '—',
     level: f.crop_impact_analysis?.application_impact_level || 'GREEN',
-    time: 'Today',
+    time: language === 'ta' ? 'இன்று' : 'Today',
   }));
 
-  const greeting = (() => {
+  const rawGreeting = (() => {
     const h = new Date().getHours();
     if (h < 12) return 'Good Morning';
     if (h < 17) return 'Good Afternoon';
     return 'Good Evening';
   })();
+  const greeting = translateGreeting(rawGreeting);
 
   // ── Empty state ──────────────────────────────────────────────────────────────
   if (farms.length === 0) {
@@ -269,11 +284,11 @@ export const Dashboard: React.FC = () => {
           <Sprout className="w-8 h-8" />
         </div>
         <div className="max-w-md space-y-2">
-          <h2 className="text-2xl font-bold text-slate-900">Add your first farm to start crop-impact monitoring.</h2>
-          <p className="text-sm text-slate-500">CropClimate AI analyses rainfall, soil, drainage and crop stage to assess damage, survival and recovery potential.</p>
+          <h2 className="text-2xl font-bold text-slate-900">{t('Add your first farm to start crop-impact monitoring.')}</h2>
+          <p className="text-sm text-slate-500">{t('CropClimate AI analyses rainfall, soil, drainage and crop stage to assess damage, survival and recovery potential.')}</p>
         </div>
         <button onClick={() => navigate('/farms/new')} className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs inline-flex items-center gap-2 shadow-xs cursor-pointer transition-colors">
-          <Sprout className="w-4 h-4" /> Add My First Farm
+          <Sprout className="w-4 h-4" /> {t('Add My First Farm')}
         </button>
       </div>
     );
@@ -292,12 +307,12 @@ export const Dashboard: React.FC = () => {
               <HelpCircle className="w-6 h-6 text-emerald-600" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-900 mb-1">Take a quick tour?</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">Learn how to map farms, monitor rainfall and analyse crop risk with CropClimate AI.</p>
+              <h3 className="text-lg font-bold text-slate-900 mb-1">{t('Take a quick tour?')}</h3>
+              <p className="text-xs text-slate-500 leading-relaxed">{t('Learn how to map farms, monitor rainfall and analyse crop risk with CropClimate AI.')}</p>
             </div>
             <div className="flex gap-2 justify-center">
-              <button onClick={() => { setShowPromptModal(false); setTourOpen(true); }} className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-colors cursor-pointer">Start Tour</button>
-              <button onClick={() => setShowPromptModal(false)} className="px-5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition-colors cursor-pointer">Maybe Later</button>
+              <button onClick={() => { setShowPromptModal(false); setTourOpen(true); }} className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-colors cursor-pointer">{t('Start Tour')}</button>
+              <button onClick={() => setShowPromptModal(false)} className="px-5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition-colors cursor-pointer">{t('Maybe Later')}</button>
             </div>
           </div>
         </div>
@@ -313,7 +328,7 @@ export const Dashboard: React.FC = () => {
           </div>
           <div>
             <p className="text-[11px] text-slate-400 font-medium">{greeting},</p>
-            <h2 className="font-extrabold text-slate-900 text-sm leading-tight">{user?.full_name || 'Farmer'}</h2>
+            <h2 className="font-extrabold text-slate-900 text-sm leading-tight">{user?.full_name || (language === 'ta' ? 'விவசாயி' : 'Farmer')}</h2>
           </div>
         </div>
 
@@ -361,9 +376,9 @@ export const Dashboard: React.FC = () => {
           className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white font-bold rounded-xl text-xs shadow-sm transition-colors cursor-pointer shrink-0"
         >
           {isScanning ? (
-            <><Loader2 className="w-3.5 h-3.5 animate-spin" /><span className="max-w-[120px] truncate">{scanSteps[analysisStepIndex]}</span></>
+            <><Loader2 className="w-3.5 h-3.5 animate-spin" /><span className="max-w-[150px] truncate">{t(rawScanSteps[analysisStepIndex])}</span></>
           ) : (
-            <><RefreshCw className="w-3.5 h-3.5" /><span>Analyse All My Farms</span></>
+            <><RefreshCw className="w-3.5 h-3.5" /><span>{t('Analyse All My Farms')}</span></>
           )}
         </button>
       </div>
@@ -374,13 +389,13 @@ export const Dashboard: React.FC = () => {
           <AlertTriangle className="w-4 h-4 shrink-0 text-amber-500 mt-0.5" />
           <div className="flex-1 min-w-0">
             <span className="font-extrabold uppercase tracking-wider text-[10px] text-amber-700 block">
-              Official Weather Warning — {officialWarning.warning_level}
+              {t('Official Weather Warning')} — {officialWarning.warning_level}
             </span>
             <span className="font-semibold">{officialWarning.title}</span>
             <span className="text-amber-700 ml-1">• {officialWarning.description}</span>
           </div>
           <span className="shrink-0 text-[10px] text-amber-600 font-semibold hidden sm:block">
-            Valid until {officialWarning.valid_until ? new Date(officialWarning.valid_until).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}
+            {t('Valid until')} {officialWarning.valid_until ? new Date(officialWarning.valid_until).toLocaleString(language === 'ta' ? 'ta-IN' : 'en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}
           </span>
         </div>
       )}
@@ -397,10 +412,10 @@ export const Dashboard: React.FC = () => {
           <div className="bg-white rounded-2xl p-4 border border-[#e5ede8] shadow-xs space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-                <Layers className="w-3 h-3" /> FARM
+                <Layers className="w-3 h-3" /> {t('FARM')}
               </span>
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${col.pill} border-transparent`}>
-                {impact} IMPACT
+                {translateRisk(impact)} {language === 'ta' ? 'பாதிப்பு' : 'IMPACT'}
               </span>
             </div>
             <div>
@@ -414,18 +429,20 @@ export const Dashboard: React.FC = () => {
             </div>
             <div className="grid grid-cols-3 gap-2 pt-1">
               <div className="flex flex-col items-center bg-slate-50 rounded-xl p-2 border border-slate-100">
-                <span className="text-[9px] text-slate-400 uppercase font-bold">Area</span>
+                <span className="text-[9px] text-slate-400 uppercase font-bold">{t('Area')}</span>
                 <span className="text-sm font-extrabold text-slate-900 mt-0.5">{activeFarm?.area_acres ?? '—'}</span>
-                <span className="text-[9px] text-slate-400">Acres</span>
+                <span className="text-[9px] text-slate-400">{t('Acres')}</span>
               </div>
               <div className="flex flex-col items-center bg-slate-50 rounded-xl p-2 border border-slate-100">
-                <span className="text-[9px] text-slate-400 uppercase font-bold">Drainage</span>
-                <span className="text-[11px] font-extrabold text-slate-900 mt-0.5 text-center leading-tight">{activeFarm?.drainage_class || '—'}</span>
+                <span className="text-[9px] text-slate-400 uppercase font-bold">{t('Drainage')}</span>
+                <span className="text-[11px] font-extrabold text-slate-900 mt-0.5 text-center leading-tight">
+                  {activeFarm?.drainage_class ? translateDrainage(activeFarm.drainage_class) : '—'}
+                </span>
               </div>
               <div className="flex flex-col items-center bg-slate-50 rounded-xl p-2 border border-slate-100">
-                <span className="text-[9px] text-slate-400 uppercase font-bold">Farms</span>
+                <span className="text-[9px] text-slate-400 uppercase font-bold">{t('Farms')}</span>
                 <span className="text-sm font-extrabold text-slate-900 mt-0.5">{impactSummary.farms_total}</span>
-                <span className="text-[9px] text-slate-400">Total</span>
+                <span className="text-[9px] text-slate-400">{t('Total')}</span>
               </div>
             </div>
           </div>
@@ -435,15 +452,17 @@ export const Dashboard: React.FC = () => {
             {/* Crop */}
             <div className="bg-white rounded-2xl p-3.5 border border-[#e5ede8] shadow-xs space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1"><Leaf className="w-3 h-3" /> CROP</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1"><Leaf className="w-3 h-3" /> {t('CROP')}</span>
               </div>
               {fi?.has_crop ? (
                 <div className="space-y-1.5">
                   <p className="font-extrabold text-slate-900 text-sm">{translateCrop(fi.active_crop?.crop_name || '—')}</p>
-                  <p className="text-[10px] text-slate-500 font-medium">{fi.active_crop?.variety_name || 'Standard'}</p>
+                  <p className="text-[10px] text-slate-500 font-medium">
+                    {fi.active_crop?.variety_name === 'Standard' ? (language === 'ta' ? 'நிலையான ரகம்' : 'Standard') : (fi.active_crop?.variety_name || 'Standard')}
+                  </p>
                   <div className="flex items-center gap-1 mt-1">
                     <CalendarDays className="w-3 h-3 text-slate-400" />
-                    <span className="text-[10px] text-slate-500">{fi.active_crop?.crop_age_days ?? '—'} days old</span>
+                    <span className="text-[10px] text-slate-500">{fi.active_crop?.crop_age_days ?? '—'} {language === 'ta' ? 'நாட்கள் வயது' : 'days old'}</span>
                   </div>
                   <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full inline-flex items-center gap-1 mt-1 ${
                     stageVulnerability === 'EXTREME' ? 'bg-red-50 text-red-700 border border-red-200' :
@@ -451,33 +470,33 @@ export const Dashboard: React.FC = () => {
                     'bg-emerald-50 text-emerald-700 border border-emerald-200'
                   }`}>
                     <span className={`w-1.5 h-1.5 rounded-full ${riskDot(stageVulnerability)}`} />
-                    {stageVulnerability} SENSITIVITY
+                    {translateRisk(stageVulnerability)} {language === 'ta' ? 'உணர்திறன்' : 'SENSITIVITY'}
                   </div>
                 </div>
               ) : (
                 <div className="text-xs text-amber-600 font-semibold flex items-center gap-1">
-                  <AlertTriangle className="w-3.5 h-3.5" /> No crop added
+                  <AlertTriangle className="w-3.5 h-3.5" /> {t('No crop added')}
                 </div>
               )}
             </div>
 
             {/* Soil */}
             <div className="bg-white rounded-2xl p-3.5 border border-[#e5ede8] shadow-xs space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1"><FlaskConical className="w-3 h-3" /> SOIL</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1"><FlaskConical className="w-3 h-3" /> {t('SOIL')}</span>
               {fi?.soil_profile ? (
                 <div className="space-y-1.5">
-                  <p className="font-extrabold text-slate-900 text-xs leading-tight">{fi.soil_profile.soil_type || '—'}</p>
+                  <p className="font-extrabold text-slate-900 text-xs leading-tight">{translateSoilType(fi.soil_profile.soil_type)}</p>
                   <div className="flex justify-between text-[10px] text-slate-500">
-                    <span>Clay {fi.soil_profile.clay_percentage ?? '—'}%</span>
-                    <span>Sand {fi.soil_profile.sand_percentage ?? '—'}%</span>
+                    <span>{t('Clay')} {fi.soil_profile.clay_percentage ?? '—'}%</span>
+                    <span>{t('Sand')} {fi.soil_profile.sand_percentage ?? '—'}%</span>
                   </div>
                   <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                     <div className="h-full bg-amber-400 rounded-full" style={{ width: `${fi.soil_profile.clay_percentage ?? 30}%` }} />
                   </div>
-                  <span className="text-[9px] text-slate-400 block">{fi.soil_profile.soil_source || 'Survey'}</span>
+                  <span className="text-[9px] text-slate-400 block">{fi.soil_profile.soil_source ? t(fi.soil_profile.soil_source) : t('Survey')}</span>
                 </div>
               ) : (
-                <p className="text-xs text-slate-400 italic">No soil data</p>
+                <p className="text-xs text-slate-400 italic">{t('No soil data')}</p>
               )}
             </div>
           </div>
@@ -485,37 +504,37 @@ export const Dashboard: React.FC = () => {
           {/* Today's Weather Card */}
           <div className="bg-gradient-to-br from-sky-50 to-emerald-50 rounded-2xl p-4 border border-sky-200 shadow-xs">
             <span className="text-[10px] font-bold uppercase tracking-wider text-sky-600 flex items-center gap-1 mb-2">
-              <CloudRain className="w-3 h-3" /> TODAY'S WEATHER
+              <CloudRain className="w-3 h-3" /> {t('TODAY\'S WEATHER')}
             </span>
             <div className="grid grid-cols-3 gap-2 text-center">
               <div>
                 <div className="text-xl font-extrabold text-sky-800">{weather?.current_temperature ?? 28}°</div>
-                <div className="text-[9px] text-slate-500 font-medium">Temp</div>
+                <div className="text-[9px] text-slate-500 font-medium">{t('Temp')}</div>
               </div>
               <div>
                 <div className="text-xl font-extrabold text-emerald-700">{weather?.current_humidity ?? 72}%</div>
-                <div className="text-[9px] text-slate-500 font-medium">Humidity</div>
+                <div className="text-[9px] text-slate-500 font-medium">{t('Humidity')}</div>
               </div>
               <div>
                 <div className="text-xl font-extrabold text-slate-700">{metrics?.forecast_rain_24h ?? 0}mm</div>
-                <div className="text-[9px] text-slate-500 font-medium">Forecast</div>
+                <div className="text-[9px] text-slate-500 font-medium">{t('Forecast')}</div>
               </div>
             </div>
             <div className="mt-3 pt-2.5 border-t border-sky-200 grid grid-cols-2 gap-2 text-[10px] text-slate-600">
               <div className="flex justify-between">
-                <span>24h Rain:</span>
+                <span>{t('24h Rain:')}</span>
                 <span className="font-bold text-sky-700">{metrics?.forecast_rain_24h ?? 0} mm</span>
               </div>
               <div className="flex justify-between">
-                <span>48h Rain:</span>
+                <span>{t('48h Rain:')}</span>
                 <span className="font-bold text-sky-700">{metrics?.forecast_rain_48h ?? 0} mm</span>
               </div>
               <div className="flex justify-between">
-                <span>Prev 48h:</span>
+                <span>{t('Prev 48h:')}</span>
                 <span className="font-bold text-amber-700">{metrics?.previous_rain_48h ?? 0} mm</span>
               </div>
               <div className="flex justify-between">
-                <span>Wind:</span>
+                <span>{t('Wind:')}</span>
                 <span className="font-bold">{weather?.wind_speed ?? 6} km/h</span>
               </div>
             </div>
@@ -524,7 +543,7 @@ export const Dashboard: React.FC = () => {
           {/* Farm switch mini list */}
           {farms.length > 1 && (
             <div className="bg-white rounded-2xl p-3 border border-[#e5ede8] shadow-xs space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">All Farms Quick Switch</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{t('All Farms Quick Switch')}</span>
               {farms.map(f => {
                 const fi2 = allFarmsImpact.find(x => x.farm_id === f.id);
                 const lv = fi2?.crop_impact_analysis?.application_impact_level || 'GREEN';
@@ -539,7 +558,7 @@ export const Dashboard: React.FC = () => {
                   >
                     <span className={`w-2 h-2 rounded-full shrink-0 ${c.bg}`} />
                     <span className="flex-1 truncate">{f.farm_name}</span>
-                    <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full border ${c.pill} border-transparent`}>{lv}</span>
+                    <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full border ${c.pill} border-transparent`}>{translateRisk(lv)}</span>
                   </button>
                 );
               })}
@@ -554,17 +573,17 @@ export const Dashboard: React.FC = () => {
               <div>
                 <h3 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-                  Farm Impact Map — All Fields
+                  {t('Farm Impact Map — All Fields')}
                 </h3>
                 <p className="text-[10px] text-slate-500 mt-0.5">
-                  Click any farm polygon to inspect crop stage, rainfall & waterlogging risk
+                  {t('Click any farm polygon to inspect crop stage, rainfall & waterlogging risk')}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-3 text-[10px] font-semibold">
                   {[['GREEN', 'bg-emerald-500'], ['YELLOW', 'bg-yellow-400'], ['ORANGE', 'bg-orange-500'], ['RED', 'bg-red-500']].map(([l, bg]) => (
                     <div key={l} className="flex items-center gap-1 text-slate-600">
-                      <span className={`w-2 h-2 rounded-full ${bg}`} />{l}
+                      <span className={`w-2 h-2 rounded-full ${bg}`} />{translateRisk(l)}
                     </div>
                   ))}
                 </div>
@@ -580,12 +599,12 @@ export const Dashboard: React.FC = () => {
             />
             {/* Map footer summary */}
             <div className="px-4 py-2.5 border-t border-[#e5ede8] flex items-center gap-4 text-[10px] text-slate-500 flex-wrap">
-              <span><strong className="text-slate-700">{impactSummary.farms_total}</strong> farms mapped</span>
-              <span><strong className="text-slate-700">{impactSummary.farms_analysed}</strong> analysed</span>
-              <span><strong className="text-red-600">{impactSummary.severe_count + impactSummary.high_count}</strong> require attention</span>
-              <span><strong className="text-emerald-700">{impactSummary.low_count}</strong> in safe zone</span>
+              <span><strong className="text-slate-700">{impactSummary.farms_total}</strong> {t('farms mapped')}</span>
+              <span><strong className="text-slate-700">{impactSummary.farms_analysed}</strong> {t('analysed')}</span>
+              <span><strong className="text-red-600">{impactSummary.severe_count + impactSummary.high_count}</strong> {t('require attention')}</span>
+              <span><strong className="text-emerald-700">{impactSummary.low_count}</strong> {t('in safe zone')}</span>
               <button onClick={() => navigate('/crop-impact')} className="ml-auto flex items-center gap-1 text-emerald-700 font-bold cursor-pointer hover:underline">
-                Full Analysis <ChevronRight className="w-3 h-3" />
+                {t('Full Analysis')} <ChevronRight className="w-3 h-3" />
               </button>
             </div>
           </div>
@@ -600,18 +619,18 @@ export const Dashboard: React.FC = () => {
           <div className="flex items-center gap-1.5 mb-2.5">
             <Activity className="w-3.5 h-3.5 text-emerald-600" />
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
-              CropClimate AI Crop Impact Indicators — {fi.farm_name}
+              {t('CropClimate AI Crop Impact Indicators —')} {fi.farm_name}
             </span>
-            <span className="ml-auto text-[9px] text-slate-400 font-medium italic">Hybrid ML + Agronomic Engine v1.0.0</span>
+            <span className="ml-auto text-[9px] text-slate-400 font-medium italic">{t('Hybrid ML + Agronomic Engine v1.0.0')}</span>
           </div>
           <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-            <MetricPill label="Rain 24h" value={`${fi.weather_metrics?.forecast_rain_24h_mm ?? 0} mm`} dot="bg-sky-400" />
-            <MetricPill label="Rain 48h" value={`${fi.weather_metrics?.forecast_rain_48h_mm ?? 0} mm`} dot="bg-sky-500" />
-            <MetricPill label="Waterlog Risk" value={translateRisk(fi.waterlogging_analysis?.risk_level || 'LOW')} dot={riskDot(fi.waterlogging_analysis?.risk_level || 'LOW')} />
-            <MetricPill label="Damage Risk" value={translateRisk(fi.crop_impact_analysis?.damage_risk || 'LOW')} dot={riskDot(fi.crop_impact_analysis?.damage_risk || 'LOW')} />
-            <MetricPill label="Survival" value={translateRisk(fi.crop_impact_analysis?.survival_potential || 'HIGH')} dot="bg-emerald-500" />
-            <MetricPill label="Recovery" value={translateRisk(fi.crop_impact_analysis?.recovery_potential || 'HIGH')} dot="bg-emerald-400" />
-            <MetricPill label="Crop Loss" value={translateRisk(fi.crop_impact_analysis?.crop_loss_risk || 'LOW')} dot={riskDot(fi.crop_impact_analysis?.crop_loss_risk || 'LOW')} />
+            <MetricPill label={t('Rain 24h')} value={`${fi.weather_metrics?.forecast_rain_24h_mm ?? 0} mm`} dot="bg-sky-400" />
+            <MetricPill label={t('Rain 48h')} value={`${fi.weather_metrics?.forecast_rain_48h_mm ?? 0} mm`} dot="bg-sky-500" />
+            <MetricPill label={t('Waterlog Risk')} value={translateRisk(fi.waterlogging_analysis?.risk_level || 'LOW')} dot={riskDot(fi.waterlogging_analysis?.risk_level || 'LOW')} />
+            <MetricPill label={t('Damage Risk')} value={translateRisk(fi.crop_impact_analysis?.damage_risk || 'LOW')} dot={riskDot(fi.crop_impact_analysis?.damage_risk || 'LOW')} />
+            <MetricPill label={t('Survival')} value={translateRisk(fi.crop_impact_analysis?.survival_potential || 'HIGH')} dot="bg-emerald-500" />
+            <MetricPill label={t('Recovery')} value={translateRisk(fi.crop_impact_analysis?.recovery_potential || 'HIGH')} dot="bg-emerald-400" />
+            <MetricPill label={t('Crop Loss')} value={translateRisk(fi.crop_impact_analysis?.crop_loss_risk || 'LOW')} dot={riskDot(fi.crop_impact_analysis?.crop_loss_risk || 'LOW')} />
           </div>
         </div>
       )}
@@ -626,9 +645,9 @@ export const Dashboard: React.FC = () => {
           <div className="bg-white rounded-2xl p-4 border border-[#e5ede8] shadow-xs space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
-                <BarChart3 className="w-4 h-4 text-sky-500" /> Rainfall Outlook
+                <BarChart3 className="w-4 h-4 text-sky-500" /> {t('Rainfall Outlook')}
               </h4>
-              <span className="text-[10px] text-slate-400 font-medium">Next 48 hours (estimated)</span>
+              <span className="text-[10px] text-slate-400 font-medium">{t('Next 48 hours (estimated)')}</span>
             </div>
             <div className="h-[90px]">
               <RainfallMiniChart data={rainBars} />
@@ -643,43 +662,50 @@ export const Dashboard: React.FC = () => {
                 <p className="text-base font-extrabold text-sky-800">{metrics?.forecast_rain_48h ?? 0}<span className="text-[9px] font-medium">mm</span></p>
               </div>
               <div className="bg-amber-50 rounded-xl p-2 border border-amber-100">
-                <p className="text-[9px] text-amber-600 font-bold uppercase">Prev 48h</p>
+                <p className="text-[9px] text-amber-600 font-bold uppercase">{t('Prev 48h:')}</p>
                 <p className="text-base font-extrabold text-amber-800">{metrics?.previous_rain_48h ?? 0}<span className="text-[9px] font-medium">mm</span></p>
               </div>
             </div>
             <div className="text-[10px] text-slate-500 flex items-center gap-1">
-              <Info className="w-3 h-3" /> Antecedent Wetness Index: <strong className="text-slate-700 ml-0.5">{metrics?.antecedent_rainfall_index?.toFixed(2) ?? '0.00'}</strong>
+              <Info className="w-3 h-3" /> {t('Antecedent Wetness Index:')} <strong className="text-slate-700 ml-0.5">{metrics?.antecedent_rainfall_index?.toFixed(2) ?? '0.00'}</strong>
             </div>
           </div>
 
           {/* Crop Stage */}
           <div className="bg-white rounded-2xl p-4 border border-[#e5ede8] shadow-xs space-y-3">
             <h4 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
-              <Sprout className="w-4 h-4 text-emerald-500" /> Crop Growth Stage
+              <Sprout className="w-4 h-4 text-emerald-500" /> {t('Crop Growth Stage')}
             </h4>
             <div className="flex items-center gap-5">
-              <StageRing pct={stagePct} label={translateStage(fi.active_crop?.growth_stage || 'Vegetative')} days={cropAgeDays} />
+              <StageRing
+                pct={stagePct}
+                label={translateStage(fi.active_crop?.growth_stage || 'Vegetative')}
+                days={cropAgeDays}
+                daysLabel={language === 'ta' ? 'வயது' : 'old'}
+              />
               <div className="flex-1 space-y-2 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Stage</span>
+                  <span className="text-slate-500">{t('Stage')}</span>
                   <span className="font-bold text-slate-900 text-right max-w-[120px] leading-tight">{translateStage(fi.active_crop?.growth_stage || '—')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Variety</span>
-                  <span className="font-bold text-slate-700">{fi.active_crop?.variety_name || 'Standard'}</span>
+                  <span className="text-slate-500">{t('Variety')}</span>
+                  <span className="font-bold text-slate-700">
+                    {fi.active_crop?.variety_name === 'Standard' ? (language === 'ta' ? 'நிலையான ரகம்' : 'Standard') : (fi.active_crop?.variety_name || 'Standard')}
+                  </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Source</span>
-                  <span className="font-bold text-slate-700">{fi.active_crop?.growth_stage_source || 'ESTIMATED'}</span>
+                  <span className="text-slate-500">{t('Source')}</span>
+                  <span className="font-bold text-slate-700">{fi.active_crop?.growth_stage_source ? t(fi.active_crop.growth_stage_source) : t('ESTIMATED')}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-500">Sensitivity</span>
+                  <span className="text-slate-500">{t('Sensitivity')}</span>
                   <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${
                     stageVulnerability === 'EXTREME' ? 'bg-red-50 text-red-700 border-red-200' :
                     stageVulnerability === 'HIGH' ? 'bg-orange-50 text-orange-700 border-orange-200' :
                     'bg-emerald-50 text-emerald-700 border-emerald-200'
                   }`}>
-                    {stageVulnerability}
+                    {translateRisk(stageVulnerability)}
                   </span>
                 </div>
               </div>
@@ -687,17 +713,17 @@ export const Dashboard: React.FC = () => {
             {/* Stage progress bar */}
             <div>
               <div className="flex justify-between text-[10px] text-slate-400 mb-1">
-                <span>Planting</span>
-                <span>{stagePct}% season progress</span>
-                <span>Harvest</span>
+                <span>{t('Planting')}</span>
+                <span>{stagePct}% {language === 'ta' ? 'பருவ முன்னேற்றம்' : 'season progress'}</span>
+                <span>{t('Harvest')}</span>
               </div>
               <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div className="h-full bg-gradient-to-r from-emerald-400 to-green-600 rounded-full transition-all duration-500" style={{ width: `${stagePct}%` }} />
               </div>
             </div>
             <div className="flex items-center justify-between text-[10px] text-slate-400">
-              <span>Engine: {fi.crop_impact_analysis?.engine_type || 'HYBRID'}</span>
-              <span>Model: {fi.crop_impact_analysis?.model_version || 'v1.0.0'}</span>
+              <span>{t('Engine:')} {fi.crop_impact_analysis?.engine_type || 'HYBRID'}</span>
+              <span>{t('Model:')} {fi.crop_impact_analysis?.model_version || 'v1.0.0'}</span>
             </div>
           </div>
         </div>
@@ -712,19 +738,19 @@ export const Dashboard: React.FC = () => {
           {/* Waterlogging */}
           <div className="bg-white rounded-2xl p-4 border border-[#e5ede8] shadow-xs space-y-3">
             <h4 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
-              <Droplets className="w-4 h-4 text-sky-500" /> Waterlogging Risk Analysis
+              <Droplets className="w-4 h-4 text-sky-500" /> {t('Waterlogging Risk Analysis')}
             </h4>
             <div className={`rounded-xl p-3 border ${
-              fi.waterlogging_analysis?.risk_level === 'HIGH' || fi.waterlogging_analysis?.risk_level === 'SEVERE'
+              fi.waterlogging_analysis?.risk_level === 'HIGH' || fi.waterlogging_analysis?.risk_level === 'SEVERE' || fi.waterlogging_analysis?.risk_level === 'CRITICAL'
                 ? 'bg-red-50 border-red-200'
-                : fi.waterlogging_analysis?.risk_level === 'MODERATE'
+                : fi.waterlogging_analysis?.risk_level === 'MODERATE' || fi.waterlogging_analysis?.risk_level === 'ELEVATED'
                 ? 'bg-yellow-50 border-yellow-200'
                 : 'bg-emerald-50 border-emerald-200'
             }`}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-slate-500 font-medium">Risk Level</span>
+                <span className="text-xs text-slate-500 font-medium">{t('Risk Level')}</span>
                 <span className={`text-sm font-extrabold ${
-                  fi.waterlogging_analysis?.risk_level === 'HIGH' ? 'text-red-700' :
+                  fi.waterlogging_analysis?.risk_level === 'HIGH' || fi.waterlogging_analysis?.risk_level === 'CRITICAL' ? 'text-red-700' :
                   fi.waterlogging_analysis?.risk_level === 'MODERATE' ? 'text-yellow-700' :
                   'text-emerald-700'
                 }`}>
@@ -733,7 +759,7 @@ export const Dashboard: React.FC = () => {
               </div>
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Soil Saturation</span>
+                  <span className="text-slate-500">{t('Soil Saturation')}</span>
                   <span className="font-bold text-slate-800">{fi.waterlogging_analysis?.soil_saturation_pct ?? 50}%</span>
                 </div>
                 <div className="h-1.5 bg-white/60 rounded-full overflow-hidden">
@@ -743,19 +769,19 @@ export const Dashboard: React.FC = () => {
                   />
                 </div>
                 <div className="flex justify-between pt-0.5">
-                  <span className="text-slate-500">Est. Standing Water</span>
-                  <span className="font-bold text-slate-800">{fi.waterlogging_analysis?.estimated_standing_water_hours ?? 0} hrs</span>
+                  <span className="text-slate-500">{t('Est. Standing Water')}</span>
+                  <span className="font-bold text-slate-800">{fi.waterlogging_analysis?.estimated_standing_water_hours ?? 0} {language === 'ta' ? 'மணி' : 'hrs'}</span>
                 </div>
               </div>
             </div>
             {/* Contributing factors */}
             {whyFactors.length > 0 && (
               <div className="space-y-1.5">
-                <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Contributing Factors</span>
+                <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">{t('Contributing Factors')}</span>
                 {whyFactors.map((f2: string, i: number) => (
                   <div key={i} className="flex items-start gap-2 text-xs text-slate-600">
                     <div className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0 mt-1" />
-                    {f2}
+                    {translateFactor(f2)}
                   </div>
                 ))}
               </div>
@@ -766,17 +792,17 @@ export const Dashboard: React.FC = () => {
           <div className="bg-white rounded-2xl p-4 border border-[#e5ede8] shadow-xs space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
-                <HelpCircle className="w-4 h-4 text-purple-500" /> Why This Result?
+                <HelpCircle className="w-4 h-4 text-purple-500" /> {t('Why This Result?')}
               </h4>
               <button onClick={() => navigate('/crop-impact')} className="text-[10px] font-bold text-emerald-700 hover:underline cursor-pointer flex items-center gap-0.5">
-                Full Explanation <ChevronRight className="w-3 h-3" />
+                {t('Full Explanation')} <ChevronRight className="w-3 h-3" />
               </button>
             </div>
             {/* Feature importances */}
             {((fi as any)?.why_this_alert?.technical_feature_importances || []).map((feat: any, i: number) => (
               <div key={i} className="space-y-0.5">
                 <div className="flex justify-between text-[10px] text-slate-600">
-                  <span className="font-semibold">{feat.feature}</span>
+                  <span className="font-semibold">{translateTechnicalFeature(feat.feature)}</span>
                   <span className="font-bold text-slate-800">{feat.importance_pct}%</span>
                 </div>
                 <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
@@ -790,11 +816,11 @@ export const Dashboard: React.FC = () => {
             {/* Farmer explanation statements */}
             {farmerStatements.length > 0 && (
               <div className="pt-2 border-t border-slate-100 space-y-1.5">
-                <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider block">Farmer Summary</span>
+                <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider block">{t('Farmer Summary')}</span>
                 {farmerStatements.map((s: string, i: number) => (
-                  <div key={i} className="flex items-start gap-2 text-[11px] text-slate-600">
+                  <div key={i} className="flex items-start gap-2 text-[11px] text-slate-600 leading-snug">
                     <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0 mt-0.5" />
-                    {s}
+                    {translateWhyStatement(s)}
                   </div>
                 ))}
               </div>
@@ -811,13 +837,17 @@ export const Dashboard: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
             <h4 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
               <Zap className="w-4 h-4 text-amber-500" />
-              Recommended Actions — {fi.farm_name}
+              {t('Recommended Actions —')} {fi.farm_name}
             </h4>
             <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs">
-              {([['BEFORE', 'Before Rain', 'bg-emerald-600'], ['DURING', 'During Rain', 'bg-sky-600'], ['AFTER', 'After Rain', 'bg-amber-600']] as const).map(([tab, label, active]) => (
+              {([
+                ['BEFORE', language === 'ta' ? 'மழைக்கு முன்' : 'Before Rain', 'bg-emerald-600'],
+                ['DURING', language === 'ta' ? 'மழையின் போது' : 'During Rain', 'bg-sky-600'],
+                ['AFTER', language === 'ta' ? 'மழைக்கு பின்' : 'After Rain', 'bg-amber-600']
+              ] as const).map(([tab, label, active]) => (
                 <button
                   key={tab}
-                  onClick={() => setActionTab(tab)}
+                  onClick={() => setActionTab(tab as any)}
                   className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${actionTab === tab ? `${active} text-white shadow-xs` : 'text-slate-500 hover:text-slate-800'}`}
                 >
                   {label}
@@ -828,21 +858,21 @@ export const Dashboard: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             {actionTab === 'BEFORE' && (beforeActions.length > 0 ? beforeActions.map((a: any, i: number) => (
-              <ActionCard key={i} act={a} color="bg-emerald-50/50 border-emerald-100" />
-            )) : <p className="text-xs text-slate-400 italic col-span-3">Clear drainage ditches and strengthen bunds to prevent ponding.</p>)}
+              <ActionCard key={i} act={translateActionCard(a)} color="bg-emerald-50/50 border-emerald-100" />
+            )) : <p className="text-xs text-slate-400 italic col-span-3">{t('Clear drainage ditches and strengthen bunds to prevent ponding.')}</p>)}
 
             {actionTab === 'DURING' && (duringActions.length > 0 ? duringActions.map((a: any, i: number) => (
-              <ActionCard key={i} act={a} color="bg-sky-50/50 border-sky-100" />
-            )) : <p className="text-xs text-slate-400 italic col-span-3">Ensure field runoff points stay open; suspend fertilizer spraying.</p>)}
+              <ActionCard key={i} act={translateActionCard(a)} color="bg-sky-50/50 border-sky-100" />
+            )) : <p className="text-xs text-slate-400 italic col-span-3">{t('Ensure field runoff points stay open; suspend fertilizer spraying.')}</p>)}
 
             {actionTab === 'AFTER' && (afterActions.length > 0 ? afterActions.map((a: any, i: number) => (
-              <ActionCard key={i} act={a} color="bg-amber-50/50 border-amber-100" />
-            )) : <p className="text-xs text-slate-400 italic col-span-3">Drain stagnant water within 24h and apply foliar micronutrients.</p>)}
+              <ActionCard key={i} act={translateActionCard(a)} color="bg-amber-50/50 border-amber-100" />
+            )) : <p className="text-xs text-slate-400 italic col-span-3">{t('Drain stagnant water within 24h and apply foliar micronutrients.')}</p>)}
           </div>
 
           <div className="flex justify-end pt-1">
             <button onClick={() => navigate('/crop-impact')} className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1 cursor-pointer">
-              Full Agronomic Guide <ChevronRight className="w-3.5 h-3.5" />
+              {t('Full Agronomic Guide')} <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -856,32 +886,32 @@ export const Dashboard: React.FC = () => {
         {/* Climate Overview */}
         <div className="bg-white rounded-2xl p-4 border border-[#e5ede8] shadow-xs space-y-3">
           <h4 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
-            <TrendingUp className="w-4 h-4 text-emerald-500" /> Climate Overview
+            <TrendingUp className="w-4 h-4 text-emerald-500" /> {t('Climate Overview')}
           </h4>
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-gradient-to-br from-emerald-50 to-sky-50 rounded-xl p-3 border border-emerald-100 text-center space-y-1">
               <Thermometer className="w-5 h-5 text-orange-400 mx-auto" />
               <p className="text-xl font-extrabold text-slate-900">{weather?.current_temperature ?? 28}°C</p>
-              <p className="text-[10px] text-slate-500 font-medium">Current Temp</p>
+              <p className="text-[10px] text-slate-500 font-medium">{t('Current Temp')}</p>
             </div>
             <div className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl p-3 border border-sky-100 text-center space-y-1">
               <Droplets className="w-5 h-5 text-sky-400 mx-auto" />
               <p className="text-xl font-extrabold text-slate-900">{weather?.current_humidity ?? 72}%</p>
-              <p className="text-[10px] text-slate-500 font-medium">Humidity</p>
+              <p className="text-[10px] text-slate-500 font-medium">{t('Humidity')}</p>
             </div>
             <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-3 border border-amber-100 text-center space-y-1">
               <CloudRain className="w-5 h-5 text-sky-500 mx-auto" />
               <p className="text-xl font-extrabold text-sky-800">{metrics?.forecast_rain_24h ?? 0}mm</p>
-              <p className="text-[10px] text-slate-500 font-medium">Rain Next 24h</p>
+              <p className="text-[10px] text-slate-500 font-medium">{t('Rain Next 24h')}</p>
             </div>
             <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-3 border border-slate-200 text-center space-y-1">
               <Wind className="w-5 h-5 text-slate-400 mx-auto" />
               <p className="text-xl font-extrabold text-slate-800">{weather?.wind_speed ?? 6}km/h</p>
-              <p className="text-[10px] text-slate-500 font-medium">Wind Speed</p>
+              <p className="text-[10px] text-slate-500 font-medium">{t('Wind Speed')}</p>
             </div>
           </div>
           <button onClick={() => navigate('/weather')} className="w-full text-xs font-bold text-sky-700 hover:bg-sky-50 border border-sky-200 rounded-xl py-1.5 flex items-center justify-center gap-1 cursor-pointer transition-colors">
-            Full Weather Forecast <ChevronRight className="w-3.5 h-3.5" />
+            {t('Full Weather Forecast')} <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
@@ -889,9 +919,9 @@ export const Dashboard: React.FC = () => {
         <div className="bg-white rounded-2xl p-4 border border-[#e5ede8] shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <h4 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
-              <TrendingDown className="w-4 h-4 text-slate-500" /> Recent Analysis
+              <TrendingDown className="w-4 h-4 text-slate-500" /> {t('Recent Analysis')}
             </h4>
-            <button onClick={() => navigate('/history')} className="text-[10px] font-bold text-emerald-700 hover:underline cursor-pointer">View All</button>
+            <button onClick={() => navigate('/history')} className="text-[10px] font-bold text-emerald-700 hover:underline cursor-pointer">{t('View All')}</button>
           </div>
           <div className="space-y-2">
             {recentHistory.length > 0 ? recentHistory.map((r, i) => {
@@ -901,19 +931,19 @@ export const Dashboard: React.FC = () => {
                   <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${rc.bg}`} />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-bold text-slate-900 truncate">{r.farm}</p>
-                    <p className="text-[10px] text-slate-500">{r.crop} • {r.time}</p>
+                    <p className="text-[10px] text-slate-500">{translateCrop(r.crop)} • {r.time}</p>
                   </div>
-                  <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${rc.pill} border-transparent shrink-0`}>{r.level}</span>
+                  <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${rc.pill} border-transparent shrink-0`}>{translateRisk(r.level)}</span>
                 </div>
               );
             }) : (
               <p className="text-xs text-slate-400 italic text-center py-4">
-                Run "Analyse All My Farms" to see results here.
+                {t('Run "Analyse All My Farms" to see results here.')}
               </p>
             )}
           </div>
           <button onClick={() => navigate('/crop-impact')} className="w-full text-xs font-bold text-emerald-700 hover:bg-emerald-50 border border-emerald-200 rounded-xl py-1.5 flex items-center justify-center gap-1 cursor-pointer transition-colors">
-            Analyse All Farms <ArrowRight className="w-3.5 h-3.5" />
+            {t('Analyse All Farms')} <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
@@ -929,13 +959,13 @@ export const Dashboard: React.FC = () => {
             'Weather: Live (Open-Meteo)',
           ].map(label => (
             <div key={label} className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold">
-              <CheckCircle2 className="w-3 h-3 text-emerald-600" /> {label}
+              <CheckCircle2 className="w-3 h-3 text-emerald-600" /> {t(label)}
             </div>
           ))}
         </div>
         <div className="flex items-center gap-1.5 text-slate-500 font-semibold">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          CropClimate AI Engine v1.0.0
+          {t('CropClimate AI Engine v1.0.0')}
         </div>
       </div>
     </div>

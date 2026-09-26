@@ -76,19 +76,34 @@ if (typeof document !== 'undefined') {
   document.documentElement.lang = initialLang;
 }
 
+export const allNamespaces = [
+  'common',
+  'auth',
+  'dashboard',
+  'farms',
+  'cropImpact',
+  'alerts',
+  'weather',
+  'recommendations',
+  'climate',
+  'reports',
+  'validation',
+] as const;
+
 i18n
   .use(initReactI18next)
   .init({
     resources,
     lng: initialLang,
     fallbackLng: 'en',
-    defaultNS,
-    fallbackNS: 'common',
+    ns: allNamespaces,
+    defaultNS: 'common',
+    fallbackNS: allNamespaces,
     interpolation: {
       escapeValue: false, // React already escapes values
     },
-    missingKeyHandler: (lng, ns, key) => {
-      console.warn(`[i18n] Missing translation key "${key}" in namespace "${ns}" for language "${lng}". Falling back to English.`);
+    missingKeyHandler: () => {
+      // quiet fallback in production
     },
     returnNull: false,
     react: {

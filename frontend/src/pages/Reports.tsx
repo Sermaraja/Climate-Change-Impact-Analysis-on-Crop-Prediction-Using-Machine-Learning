@@ -59,7 +59,7 @@ interface AnalyseCropResponse {
 }
 
 export const Reports: React.FC = () => {
-  const { t, language, translateCrop, translateStage, translateSoilType, translateDrainage, translateRisk, translateFactor } = useLanguage();
+  const { t, language, translateCrop, translateStage, translateSoilType, translateDrainage, translateRisk, translateFactor, translateActionCard } = useLanguage();
   const [selectedFarmId, setSelectedFarmId] = useState<number | null>(null);
   const [reportLang, setReportLang] = useState<'en' | 'ta'>(language);
 
@@ -322,25 +322,28 @@ export const Reports: React.FC = () => {
                 <strong className="block text-amber-300 print:text-gray-900 mb-1">
                   {isTa ? 'மழைக்கு முன்' : 'Before Rain'}
                 </strong>
-                {reportData.action_recommendations.BEFORE_RAIN.map((a, i) => (
-                  <p key={i} className="text-slate-300 print:text-gray-700">• {a.title}: {a.action}</p>
-                ))}
+                {reportData.action_recommendations.BEFORE_RAIN.map((a, i) => {
+                  const item = isTa ? translateActionCard(a) : a;
+                  return <p key={i} className="text-slate-300 print:text-gray-700">• {item.title}: {item.action}</p>;
+                })}
               </div>
               <div className="p-3 bg-slate-900/60 print:bg-gray-100 rounded-lg border border-slate-800 print:border-gray-300">
                 <strong className="block text-cyan-300 print:text-gray-900 mb-1">
                   {isTa ? 'மழையின் போது' : 'During Rain'}
                 </strong>
-                {reportData.action_recommendations.DURING_RAIN_EVENT.map((a, i) => (
-                  <p key={i} className="text-slate-300 print:text-gray-700">• {a.title}: {a.action}</p>
-                ))}
+                {reportData.action_recommendations.DURING_RAIN_EVENT.map((a, i) => {
+                  const item = isTa ? translateActionCard(a) : a;
+                  return <p key={i} className="text-slate-300 print:text-gray-700">• {item.title}: {item.action}</p>;
+                })}
               </div>
               <div className="p-3 bg-slate-900/60 print:bg-gray-100 rounded-lg border border-slate-800 print:border-gray-300">
                 <strong className="block text-emerald-300 print:text-gray-900 mb-1">
                   {isTa ? 'மழைக்குப் பிறகு' : 'After Rain'}
                 </strong>
-                {reportData.action_recommendations.AFTER_RAIN.map((a, i) => (
-                  <p key={i} className="text-slate-300 print:text-gray-700">• {a.title}: {a.action}</p>
-                ))}
+                {reportData.action_recommendations.AFTER_RAIN.map((a, i) => {
+                  const item = isTa ? translateActionCard(a) : a;
+                  return <p key={i} className="text-slate-300 print:text-gray-700">• {item.title}: {item.action}</p>;
+                })}
               </div>
             </div>
           </div>

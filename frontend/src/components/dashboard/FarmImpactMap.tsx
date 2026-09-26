@@ -83,7 +83,7 @@ export const FarmImpactMap: React.FC<FarmImpactMapProps> = ({
   onViewActions,
   heightClass = "h-[420px] lg:h-[480px]"
 }) => {
-  const { t, translateCrop, translateStage, translateRisk } = useLanguage();
+  const { language, translateCrop, translateStage, translateRisk } = useLanguage();
   const [mapLayer, setMapLayer] = useState<'satellite' | 'streets'>('satellite');
 
   // Collect all boundary coordinates for global bounding box
@@ -201,13 +201,13 @@ export const FarmImpactMap: React.FC<FarmImpactMapProps> = ({
                   <div>
                     <h4 className="font-bold text-sm text-slate-900 leading-tight">{farm.farm_name}</h4>
                     <p className="text-[11px] text-slate-500">
-                      {farm.area_acres ? `${farm.area_acres} acres` : 'Area unspecified'}
+                      {farm.area_acres ? `${farm.area_acres} ${language === 'ta' ? 'ஏக்கர்' : 'acres'}` : (language === 'ta' ? 'பரப்பளவு குறிப்பிடப்படவில்லை' : 'Area unspecified')}
                     </p>
                   </div>
                   <span
                     className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${farm.labelBg}`}
                   >
-                    {farm.impactLevel}
+                    {translateRisk(farm.impactLevel)}
                   </span>
                 </div>
 
@@ -216,7 +216,7 @@ export const FarmImpactMap: React.FC<FarmImpactMapProps> = ({
                     <div className="grid grid-cols-2 gap-1.5 bg-slate-50 p-2 rounded-xl border border-slate-100 text-[11px]">
                       <div>
                         <span className="text-slate-400 block text-[9px] uppercase tracking-wider font-semibold">
-                          {t('crop.crop_name')}
+                          {language === 'ta' ? 'பயிர்' : 'Crop'}
                         </span>
                         <span className="font-medium text-slate-800">
                           {translateCrop(farm.active_crop.crop_name)}
@@ -224,20 +224,20 @@ export const FarmImpactMap: React.FC<FarmImpactMapProps> = ({
                       </div>
                       <div>
                         <span className="text-slate-400 block text-[9px] uppercase tracking-wider font-semibold">
-                          {t('crop.growth_stage')}
+                          {language === 'ta' ? 'பருவம்' : 'Growth Stage'}
                         </span>
                         <span className="font-medium text-slate-800">
                           {translateStage(farm.active_crop.growth_stage || 'Vegetative')}
                           {farm.active_crop.growth_stage_source === 'ESTIMATED' && (
                             <span className="text-[9px] text-amber-600 block">
-                              ({t('common.estimated')})
+                              ({language === 'ta' ? 'கணிக்கப்பட்டது' : 'Estimated'})
                             </span>
                           )}
                         </span>
                       </div>
                       <div>
                         <span className="text-slate-400 block text-[9px] uppercase tracking-wider font-semibold">
-                          {t('weather.forecast_rain_24h')}
+                          {language === 'ta' ? '24 மணி நேர மழை' : '24h Forecast Rain'}
                         </span>
                         <span className="font-semibold text-sky-700">
                           {farm.weather_metrics?.forecast_rain_24h_mm ?? 0} mm
@@ -245,7 +245,7 @@ export const FarmImpactMap: React.FC<FarmImpactMapProps> = ({
                       </div>
                       <div>
                         <span className="text-slate-400 block text-[9px] uppercase tracking-wider font-semibold">
-                          {t('waterlogging.risk')}
+                          {language === 'ta' ? 'நீர் தேக்க அபாயம்' : 'Waterlogging'}
                         </span>
                         <span className="font-medium text-slate-800">
                           {translateRisk(farm.waterlogging_analysis?.risk_level || 'LOW')}
@@ -256,19 +256,19 @@ export const FarmImpactMap: React.FC<FarmImpactMapProps> = ({
                     {/* Scientific risks */}
                     <div className="text-[10px] space-y-0.5 pt-1 text-slate-600">
                       <div className="flex justify-between">
-                        <span>{t('crop_damage.damage_risk')}:</span>
+                        <span>{language === 'ta' ? 'சேத அபாயம்:' : 'Damage Risk:'}</span>
                         <span className="font-semibold text-slate-800">
                           {translateRisk(farm.crop_impact_analysis?.damage_risk || 'LOW')}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span>{t('crop_damage.survival_potential')}:</span>
+                        <span>{language === 'ta' ? 'உயிர்வாழும் திறன்:' : 'Survival Potential:'}</span>
                         <span className="font-semibold text-slate-800">
                           {translateRisk(farm.crop_impact_analysis?.survival_potential || 'HIGH')}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span>{t('crop_damage.recovery_potential')}:</span>
+                        <span>{language === 'ta' ? 'மீட்புத் திறன்:' : 'Recovery Potential:'}</span>
                         <span className="font-semibold text-slate-800">
                           {translateRisk(farm.crop_impact_analysis?.recovery_potential || 'HIGH')}
                         </span>
@@ -281,20 +281,20 @@ export const FarmImpactMap: React.FC<FarmImpactMapProps> = ({
                         onClick={() => onViewAnalysis && onViewAnalysis(farm.farm_id)}
                         className="flex-1 py-1.5 px-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-semibold text-center transition-colors cursor-pointer"
                       >
-                        {t('common.view_full_analysis')}
+                        {language === 'ta' ? 'முழு பகுப்பாய்வு' : 'Full Analysis'}
                       </button>
                       <button
                         onClick={() => onViewActions && onViewActions(farm.farm_id)}
                         className="flex-1 py-1.5 px-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-[10px] font-semibold text-center transition-colors cursor-pointer"
                       >
-                        {t('farmer_actions.recommended_actions')}
+                        {language === 'ta' ? 'நடவடிக்கைகள்' : 'Actions'}
                       </button>
                     </div>
                   </div>
                 ) : (
                   <div className="py-2 text-center">
                     <p className="text-[11px] text-amber-700 mb-2">
-                      {farm.status_message || t('crop.add_crop_to_analyse')}
+                      {farm.status_message || (language === 'ta' ? 'பகுப்பாய்வு செய்ய பயிரைச் சேர்க்கவும்' : 'Add crop to analyse')}
                     </p>
                   </div>
                 )}
@@ -309,23 +309,23 @@ export const FarmImpactMap: React.FC<FarmImpactMapProps> = ({
         <div className="bg-white/95 backdrop-blur-xs rounded-xl p-1 shadow-md border border-slate-200 flex items-center gap-1">
           <button
             onClick={() => setMapLayer('satellite')}
-            className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-all ${
+            className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-all cursor-pointer ${
               mapLayer === 'satellite'
                 ? 'bg-emerald-600 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Satellite
+            {language === 'ta' ? 'செயற்கைக்கோள்' : 'Satellite'}
           </button>
           <button
             onClick={() => setMapLayer('streets')}
-            className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-all ${
+            className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-all cursor-pointer ${
               mapLayer === 'streets'
                 ? 'bg-emerald-600 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Streets
+            {language === 'ta' ? 'நிலவரைபடம்' : 'Streets'}
           </button>
         </div>
       </div>
@@ -334,25 +334,25 @@ export const FarmImpactMap: React.FC<FarmImpactMapProps> = ({
       <div className="absolute bottom-3 left-3 z-20 bg-white/95 backdrop-blur-xs rounded-xl px-3 py-2 shadow-md border border-[#e5ede8] flex items-center gap-3 text-[11px]">
         <div className="flex items-center gap-1.5 font-semibold text-slate-700 text-[10px] uppercase tracking-wider">
           <Compass className="w-3.5 h-3.5 text-emerald-600" />
-          <span>{t('dashboard.farm_impact')}</span>
+          <span>{language === 'ta' ? 'பண்ணை பாதிப்பு' : 'Farm Impact'}</span>
         </div>
         <div className="h-3 w-px bg-slate-200" />
         <div className="flex items-center gap-2.5 text-[10px]">
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full bg-red-500 ring-1 ring-red-400" />
-            <span className="font-semibold text-red-700">Red (Severe)</span>
+            <span className="font-semibold text-red-700">{language === 'ta' ? 'சிவப்பு (கடுமை)' : 'Red (Severe)'}</span>
           </span>
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full bg-orange-500 ring-1 ring-orange-400" />
-            <span className="font-semibold text-orange-700">Orange (High)</span>
+            <span className="font-semibold text-orange-700">{language === 'ta' ? 'ஆரஞ்சு (உயர்)' : 'Orange (High)'}</span>
           </span>
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 ring-1 ring-yellow-500" />
-            <span className="font-semibold text-yellow-700">Yellow (Elevated)</span>
+            <span className="font-semibold text-yellow-700">{language === 'ta' ? 'மஞ்சள் (மிதம்)' : 'Yellow (Elevated)'}</span>
           </span>
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-1 ring-emerald-400" />
-            <span className="font-semibold text-emerald-700">Green (Low)</span>
+            <span className="font-semibold text-emerald-700">{language === 'ta' ? 'பச்சை (குறைவு)' : 'Green (Low)'}</span>
           </span>
         </div>
       </div>

@@ -1,7 +1,24 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+import logging
 from app.config import settings
 from app.api.router import api_router
+
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Seed crop master data on startup (idempotent)
+    try:
+        from app.seed_crops import seed_crops
+        seed_crops()
+        logger.info("Crop master data verified/seeded.")
+    except Exception as e:
+        logger.warning(f"Crop seed skipped: {e}")
+    yield
+
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -9,6 +26,7 @@ app = FastAPI(
     description="Backend API for Climate Change Impact Analysis on Crop Prediction Using Machine Learning",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 # Set up CORS middleware

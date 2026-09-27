@@ -61,7 +61,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         </div>
 
         {/* Icon Navigation List */}
-        <nav className="flex-1 w-full flex flex-col items-center space-y-1.5 overflow-y-auto py-1 px-1.5 no-scrollbar">
+        <nav className="flex-1 w-full flex flex-col items-center space-y-1 overflow-y-auto py-1 px-1 no-scrollbar">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -71,25 +71,25 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                 data-tour={item.tourTag}
                 title={item.name}
                 className={({ isActive }) =>
-                  `w-11 h-11 rounded-xl flex flex-col items-center justify-center transition-all duration-200 group relative cursor-pointer ${
+                  `w-12 h-12 rounded-xl flex flex-col items-center justify-center transition-all duration-200 group relative cursor-pointer ${
                     isActive
-                      ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30'
-                      : 'text-slate-400 hover:text-emerald-700 hover:bg-emerald-50'
+                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                      : 'text-slate-600 hover:text-emerald-800 hover:bg-emerald-50'
                   }`
                 }
               >
                 {({ isActive }) => (
                   <>
-                    <Icon className="w-4 h-4 transition-transform group-hover:scale-110" />
+                    <Icon className={`w-4 h-4 transition-transform group-hover:scale-110 ${isActive ? 'text-white' : 'text-slate-700 group-hover:text-emerald-700'}`} />
                     <span
-                      className={`text-[8px] font-semibold leading-none mt-1 truncate max-w-[42px] ${
-                        isActive ? 'text-white' : 'text-slate-500'
+                      className={`text-[9px] font-bold leading-none mt-1 tracking-tight max-w-[50px] text-center truncate ${
+                        isActive ? 'text-white' : 'text-slate-700 group-hover:text-emerald-900'
                       }`}
                     >
                       {item.shortName}
                     </span>
                     {item.highlight && !isActive && (
-                      <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-400" />
+                      <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-500 ring-2 ring-white" />
                     )}
                   </>
                 )}

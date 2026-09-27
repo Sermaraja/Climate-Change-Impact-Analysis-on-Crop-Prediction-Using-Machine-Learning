@@ -28,6 +28,32 @@
   background: rgba(34, 197, 94, 0.7);
 }
 
+@theme {
+  --color-crop-50: #f0fdf4;
+  --color-crop-100: #dcfce7;
+  --color-crop-200: #bbf7d0;
+  --color-crop-300: #86efac;
+  --color-crop-400: #4ade80;
+  --color-crop-500: #22c55e;
+  --color-crop-600: #16a34a;
+  --color-crop-700: #15803d;
+  --color-crop-800: #166534;
+  --color-crop-900: #14532d;
+  --color-crop-950: #052e16;
+
+  --color-climate-50: #f0f9ff;
+  --color-climate-100: #e0f2fe;
+  --color-climate-200: #bae6fd;
+  --color-climate-300: #7dd3fc;
+  --color-climate-400: #38bdf8;
+  --color-climate-500: #0ea5e9;
+  --color-climate-600: #0284c7;
+  --color-climate-700: #0369a1;
+  --color-climate-800: #075985;
+  --color-climate-900: #0c4a6e;
+  --color-climate-950: #082f49;
+}
+
 /* Premium Light AgriTech Card System (Matching Reference Images) */
 .glass-panel {
   background: #ffffff;
@@ -53,15 +79,17 @@
   color: #0f172a;
 }
 
-.glass-card .text-white {
+.glass-card .text-white:not([class*="bg-"]):not(button):not(a[class*="bg-"]) {
   color: #0f172a;
 }
 
-.glass-card button.text-white,
-.glass-card a.text-white,
-.glass-card .bg-crop-500 .text-white,
-.glass-card .bg-emerald-600 .text-white {
-  color: #ffffff;
+.glass-card [class*="bg-emerald-"] .text-white,
+.glass-card [class*="bg-crop-"] .text-white,
+.glass-card [class*="bg-green-"] .text-white,
+.glass-card [class*="bg-slate-900"] .text-white,
+.glass-card button[class*="bg-"],
+.glass-card a[class*="bg-"] {
+  color: #ffffff !important;
 }
 
 .glass-card .text-slate-400 {

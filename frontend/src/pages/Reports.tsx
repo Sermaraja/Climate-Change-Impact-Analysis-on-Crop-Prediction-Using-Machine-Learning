@@ -351,7 +351,7 @@ export const Reports: React.FC = () => {
           {/* Section 5: Scientific Disclaimer */}
           <div className="p-4 rounded-xl bg-slate-900 print:bg-gray-200 border border-slate-800 print:border-gray-400 space-y-1.5 text-[11px] text-slate-400 print:text-gray-800">
             <p className="font-bold text-amber-300 print:text-gray-900">
-              {isTa ? 'அறிவியல் & முடிவு ஆதரவு மறுப்புரை:' : 'MSc Academic & Decision-Support Disclaimer:'}
+              {isTa ? 'அறிவியல் & முடிவு ஆதரவு மறுப்புரை:' : 'Scientific & Decision-Support Disclaimer:'}
             </p>
             <p>
               {isTa ? 'மாதிரி பதிப்பு:' : 'Model Version:'} {reportData.analysis_metadata.model_version || 'v1.0.0'} | {isTa ? 'விதி இயந்திரம்:' : 'Rule Engine:'} {reportData.analysis_metadata.rule_version || 'v1.0.0-tnau-icar'} | {isTa ? 'இயந்திர வகை:' : 'Engine Type:'} {reportData.analysis_metadata.engine_type}

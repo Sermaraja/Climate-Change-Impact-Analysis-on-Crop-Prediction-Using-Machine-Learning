@@ -434,40 +434,101 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     apiClient.defaults.headers.common['Accept-Language'] = language;
   }, [language]);
 
-  // Universal Translation Function
+  // Universal Translation Function with Namespace Resolution & Raw-Key Protection
+  const KNOWN_NAMESPACES = [
+    'common',
+    'auth',
+    'dashboard',
+    'farms',
+    'cropImpact',
+    'alerts',
+    'weather',
+    'recommendations',
+    'climate',
+    'reports',
+    'validation',
+  ];
+
+  const resolveI18nKey = (k: string): string => {
+    if (k.includes(':')) return k;
+    const firstDot = k.indexOf('.');
+    if (firstDot > 0) {
+      const ns = k.slice(0, firstDot);
+      if (KNOWN_NAMESPACES.includes(ns)) {
+        return `${ns}:${k.slice(firstDot + 1)}`;
+      }
+    }
+    return k;
+  };
+
   const t = (keyOrText: string, fallbackOrOptions?: string | Record<string, any>): string => {
     if (!keyOrText) return '';
     const clean = keyOrText.trim();
+    const resolvedKey = resolveI18nKey(clean);
+    const options = typeof fallbackOrOptions === 'object' && fallbackOrOptions !== null ? fallbackOrOptions : {};
+    const fallbackStr = typeof fallbackOrOptions === 'string' ? fallbackOrOptions : (options.defaultValue as string | undefined);
 
     if (language === 'ta') {
-      // 1. Check exact dictionary
+      // 1. Direct Tamil map check
       if (TAMIL_MAP[clean]) return TAMIL_MAP[clean];
-      if (typeof fallbackOrOptions === 'string' && TAMIL_MAP[fallbackOrOptions.trim()]) {
-        return TAMIL_MAP[fallbackOrOptions.trim()];
+      if (fallbackStr && TAMIL_MAP[fallbackStr.trim()]) {
+        return TAMIL_MAP[fallbackStr.trim()];
       }
 
-      // 2. Try i18n
-      const res = i18nT(clean, typeof fallbackOrOptions === 'object' ? fallbackOrOptions : {});
-      const strVal = typeof res === 'string' ? res : String(res ?? '');
-      if (strVal && strVal !== clean && !strVal.startsWith(clean)) {
-        return strVal;
+      // 2. Try i18n with resolved namespace key
+      let res = i18nT(resolvedKey, options);
+      if (typeof res === 'string' && res !== resolvedKey && res !== clean && !res.includes('.')) {
+        return res;
+      }
+
+      // Also try original key
+      res = i18nT(clean, options);
+      if (typeof res === 'string' && res !== clean && !res.includes('.')) {
+        return res;
       }
 
       // 3. Fallback string if provided
-      if (typeof fallbackOrOptions === 'string' && fallbackOrOptions.length > 0) {
-        return fallbackOrOptions;
+      if (fallbackStr && fallbackStr.length > 0) {
+        return TAMIL_MAP[fallbackStr.trim()] || fallbackStr;
+      }
+
+      // 4. If key contains dot notation and had no translation, never expose raw key!
+      if (clean.includes('.')) {
+        if (clean === 'auth.welcome.greeting' && options.name) {
+          return `வரவேற்கிறோம், ${options.name}!`;
+        }
+        const lastPart = clean.split('.').pop() || '';
+        return TAMIL_MAP[lastPart] || lastPart.replace(/_/g, ' ');
       }
 
       return clean;
     }
 
     // English mode
-    if (typeof fallbackOrOptions === 'string') {
-      return fallbackOrOptions;
+    let res = i18nT(resolvedKey, options);
+    if (typeof res === 'string' && res !== resolvedKey && res !== clean && !res.includes('.')) {
+      return res;
     }
-    const res = i18nT(clean, typeof fallbackOrOptions === 'object' ? fallbackOrOptions : {});
-    const strVal = typeof res === 'string' ? res : String(res ?? '');
-    return strVal && strVal !== clean ? strVal : clean;
+
+    res = i18nT(clean, options);
+    if (typeof res === 'string' && res !== clean && !res.includes('.')) {
+      return res;
+    }
+
+    if (fallbackStr && fallbackStr.length > 0) {
+      return fallbackStr;
+    }
+
+    // If key contains dot notation and had no translation, never expose raw key!
+    if (clean.includes('.')) {
+      if (clean === 'auth.welcome.greeting' && options.name) {
+        return `Welcome, ${options.name}!`;
+      }
+      const lastPart = clean.split('.').pop() || '';
+      return lastPart.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    }
+
+    return clean;
   };
 
   const translateCrop = (cropName?: string | null): string => {

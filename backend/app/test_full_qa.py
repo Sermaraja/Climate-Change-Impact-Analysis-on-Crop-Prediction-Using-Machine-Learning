@@ -170,7 +170,7 @@ def run_all_qa_tests():
 
     history_resp = client.get("/api/predictions/history", headers={"Authorization": f"Bearer {token1}"})
     assert history_resp.status_code == 200
-    print("[PASS] Prediction history & MSc audit trail fetched.")
+    print("[PASS] Prediction history & scientific audit trail fetched.")
 
     # 5. Admin Security & Research Panel
     admin_email = "admin_qa_2026@example.com"

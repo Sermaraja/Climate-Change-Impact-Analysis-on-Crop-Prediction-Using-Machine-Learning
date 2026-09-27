@@ -57,7 +57,7 @@ export const History: React.FC = () => {
         subtitle={
           language === 'ta'
             ? 'முழு கணிப்பு வரலாறு மற்றும் அறிவியல் தணிக்கைத் தடம்'
-            : 'Complete prediction history & MSc examiner scientific audit trail'
+            : 'Complete prediction history & agronomic scientific audit trail'
         }
         action={
           <div className="flex items-center gap-2">
@@ -108,7 +108,7 @@ export const History: React.FC = () => {
                   <th className="p-3.5">{language === 'ta' ? 'சேத அபாயம்' : 'Damage Risk'}</th>
                   <th className="p-3.5">{language === 'ta' ? 'மகசூல் இழப்பு %' : 'Yield Loss %'}</th>
                   <th className="p-3.5">{language === 'ta' ? 'முறை' : 'Method'}</th>
-                  <th className="p-3.5 text-right">{language === 'ta' ? 'தணிக்கை அறிக்கை' : 'MSc Examiner Audit'}</th>
+                  <th className="p-3.5 text-right">{language === 'ta' ? 'தணிக்கை அறிக்கை' : 'Scientific Audit'}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60 text-slate-300">
@@ -145,7 +145,7 @@ export const History: React.FC = () => {
         </div>
       )}
 
-      {/* MSc Examiner Audit Detail Modal */}
+      {/* Scientific Audit Detail Modal */}
       {selectedItem && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="glass-card max-w-2xl w-full p-6 rounded-2xl border border-slate-700 space-y-4 max-h-[85vh] overflow-y-auto">

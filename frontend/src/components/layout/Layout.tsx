@@ -12,7 +12,7 @@ export const Layout: React.FC = () => {
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col lg:pl-[68px] transition-all duration-300 min-h-screen">
+      <div className="flex-1 flex flex-col lg:pl-[68px] transition-all duration-300 min-h-screen w-full max-w-full overflow-x-hidden">
         <Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
 
         {/* Dashboard Canvas Container */}

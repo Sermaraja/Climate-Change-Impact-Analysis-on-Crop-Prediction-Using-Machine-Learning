@@ -36,6 +36,8 @@ export const LandingPage: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
+  const isTa = language === 'ta';
+
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
   };
@@ -48,7 +50,7 @@ export const LandingPage: React.FC = () => {
     }
   };
 
-  const faqs = language === 'ta' ? [
+  const faqs = isTa ? [
     {
       q: 'செயலி எதை கணிக்கிறது?',
       a: 'கிடைக்கக்கூடிய பண்ணை, பயிர் மற்றும் வானிலை தகவல்களை அடிப்படையாகக் கொண்டு, நீர் தேக்கம், பயிர் சேதம், உயிர்வாழ்வு மற்றும் மீட்பு சாத்தியம் உள்ளிட்ட மழை தொடர்பான பயிர் பாதிப்பை இது பகுப்பாய்வு செய்கிறது.',
@@ -71,7 +73,7 @@ export const LandingPage: React.FC = () => {
     },
     {
       q: 'கணிப்புகள் உத்தரவாதமானவையா?',
-      a: 'இல்லை. இந்த செயலி ஒரு விவசாய முடிவெடுக்கும் மற்றும் ஆராய்ச்சி அமைப்பாகும். முடிவுகள் கிடைக்கக்கூடிய தரவு மற்றும் மாதிரி அல்லது ஆதார வரம்புகளைப் பொறுத்தது.',
+      a: 'இல்லை. இந்த செயலி ஒரு விவசாய முடிவெடுக்கும் அமைப்பாகும். முடிவுகள் கிடைக்கக்கூடிய தரவு மற்றும் மாதிரி அல்லது ஆதார வரம்புகளைப் பொறுத்தது.',
     },
   ] : [
     {
@@ -96,7 +98,7 @@ export const LandingPage: React.FC = () => {
     },
     {
       q: 'Are the predictions guaranteed?',
-      a: 'No. The application is a decision-support and research system. Results depend on available data and model or evidence limitations.',
+      a: 'No. The application is a decision-support system. Results depend on available data and model or evidence limitations.',
     },
   ];
 
@@ -118,11 +120,11 @@ export const LandingPage: React.FC = () => {
                   CropClimate AI
                 </span>
                 <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
-                  {language === 'ta' ? 'ஆராய்ச்சி இயந்திரம்' : 'MSc Research'}
+                  {isTa ? 'வேளாண் AI தளம்' : 'Agronomic AI'}
                 </span>
               </div>
               <p className="text-xs text-slate-500 font-medium hidden sm:block">
-                {t('tagline')}
+                {isTa ? 'காலநிலை & பயிர் பாதுகாப்பு நுண்ணறிவு' : t('tagline')}
               </p>
             </div>
           </Link>
@@ -130,27 +132,27 @@ export const LandingPage: React.FC = () => {
           {/* Center Links (Desktop) */}
           <nav className="hidden lg:flex items-center space-x-8 text-sm font-medium text-slate-600">
             <a href="#hero" className="hover:text-emerald-800 transition-colors">
-              {language === 'ta' ? 'முகப்பு' : 'Home'}
+              {isTa ? 'முகப்பு' : 'Home'}
             </a>
             <a href="#how-it-works" className="hover:text-emerald-800 transition-colors">
-              {language === 'ta' ? 'செயல்படும் முறை' : 'How It Works'}
+              {isTa ? 'செயல்படும் முறை' : 'How It Works'}
             </a>
             <a href="#features" className="hover:text-emerald-800 transition-colors">
-              {language === 'ta' ? 'அம்சங்கள்' : 'Features'}
+              {isTa ? 'அம்சங்கள்' : 'Features'}
             </a>
             <a href="#climate-insights" className="hover:text-emerald-800 transition-colors">
-              {language === 'ta' ? 'காலநிலை பார்வைகள்' : 'Climate Insights'}
+              {isTa ? 'காலநிலை பார்வைகள்' : 'Climate Insights'}
             </a>
             <a href="#about" className="hover:text-emerald-800 transition-colors">
-              {language === 'ta' ? 'பற்றி' : 'About'}
+              {isTa ? 'பற்றி' : 'About'}
             </a>
             <a href="#faq" className="hover:text-emerald-800 transition-colors">
-              {language === 'ta' ? 'கேள்வி-பதில்' : 'FAQ'}
+              {isTa ? 'கேள்வி-பதில்' : 'FAQ'}
             </a>
           </nav>
 
-          {/* Right Auth CTA Buttons & Language Switcher (Desktop) */}
-          <div className="hidden sm:flex items-center space-x-4">
+          {/* Right Action Controls */}
+          <div className="hidden lg:flex items-center space-x-4">
             <LanguageToggle variant="pill" />
 
             {isAuthenticated ? (
@@ -163,10 +165,9 @@ export const LandingPage: React.FC = () => {
                 </Link>
                 <Link
                   to="/farms"
-                  className="px-5 py-2.5 text-sm font-semibold text-white bg-emerald-900 hover:bg-emerald-800 rounded-lg shadow-sm transition-all flex items-center space-x-2"
+                  className="px-5 py-2.5 text-sm font-semibold text-white bg-emerald-900 hover:bg-emerald-800 rounded-lg shadow-sm transition-all"
                 >
-                  <Sprout className="w-4 h-4 text-emerald-300" />
-                  <span>{t('nav.my_farms')}</span>
+                  {t('nav.my_farms')}
                 </Link>
               </>
             ) : (
@@ -212,50 +213,51 @@ export const LandingPage: React.FC = () => {
               onClick={() => setMobileMenuOpen(false)}
               className="block py-2 text-base font-medium text-slate-700 hover:text-emerald-900"
             >
-              {language === 'ta' ? 'முகப்பு' : 'Home'}
+              {isTa ? 'முகப்பு' : 'Home'}
             </a>
             <a
               href="#how-it-works"
               onClick={() => setMobileMenuOpen(false)}
               className="block py-2 text-base font-medium text-slate-700 hover:text-emerald-900"
             >
-              {language === 'ta' ? 'செயல்படும் முறை' : 'How It Works'}
+              {isTa ? 'செயல்படும் முறை' : 'How It Works'}
             </a>
             <a
               href="#features"
               onClick={() => setMobileMenuOpen(false)}
               className="block py-2 text-base font-medium text-slate-700 hover:text-emerald-900"
             >
-              {language === 'ta' ? 'அம்சங்கள்' : 'Features'}
+              {isTa ? 'அம்சங்கள்' : 'Features'}
             </a>
             <a
               href="#climate-insights"
               onClick={() => setMobileMenuOpen(false)}
               className="block py-2 text-base font-medium text-slate-700 hover:text-emerald-900"
             >
-              {language === 'ta' ? 'காலநிலை பார்வைகள்' : 'Climate Insights'}
+              {isTa ? 'காலநிலை பார்வைகள்' : 'Climate Insights'}
             </a>
             <a
               href="#about"
               onClick={() => setMobileMenuOpen(false)}
               className="block py-2 text-base font-medium text-slate-700 hover:text-emerald-900"
             >
-              {language === 'ta' ? 'பற்றி' : 'About'}
+              {isTa ? 'பற்றி' : 'About'}
             </a>
             <a
               href="#faq"
               onClick={() => setMobileMenuOpen(false)}
               className="block py-2 text-base font-medium text-slate-700 hover:text-emerald-900"
             >
-              {language === 'ta' ? 'கேள்வி-பதில்' : 'FAQ'}
+              {isTa ? 'கேள்வி-பதில்' : 'FAQ'}
             </a>
+
             <div className="pt-4 border-t border-slate-100 flex flex-col space-y-2">
               {isAuthenticated ? (
                 <>
                   <Link
                     to="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full text-center py-2.5 font-semibold text-slate-700 bg-slate-100 rounded-lg"
+                    className="w-full text-center py-2.5 font-semibold text-slate-800 bg-slate-100 rounded-lg"
                   >
                     {t('nav.dashboard')}
                   </Link>
@@ -300,11 +302,11 @@ export const LandingPage: React.FC = () => {
             <div className="lg:col-span-7 space-y-8">
               <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold tracking-wide">
                 <CloudRain className="w-4 h-4 text-emerald-600" />
-                <span>{language === 'ta' ? 'பண்ணை அளவிலான தீவிர வானிலை நுண்ணறிவு' : 'Farm-Specific Extreme Weather Intelligence'}</span>
+                <span>{isTa ? 'பண்ணை அளவிலான தீவிர வானிலை நுண்ணறிவு' : 'Farm-Specific Extreme Weather Intelligence'}</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.12]">
-                {language === 'ta' ? (
+                {isTa ? (
                   <>
                     மழையை அறிவோம். <br />
                     <span className="text-emerald-900">பயிரைக் காப்போம்.</span>
@@ -318,7 +320,7 @@ export const LandingPage: React.FC = () => {
               </h1>
 
               <p className="text-lg sm:text-xl text-slate-600 font-normal leading-relaxed max-w-2xl">
-                {language === 'ta'
+                {isTa
                   ? 'தீவிர மழைக்கு முன்னும் பின்னும் பயிர் அபாயத்தைப் புரிந்து கொள்ள வானிலை, பயிர் வளர்ச்சி நிலை, மண் நிலை, வடிகால் மற்றும் இயந்திர கற்றலை ஒருங்கிணைக்கும் நுண்ணறிவு தளம்.'
                   : 'Farm-specific rainfall impact intelligence that combines weather, crop growth stage, soil conditions, drainage and machine learning to help understand crop risk before and after extreme rainfall.'}
               </p>
@@ -328,14 +330,14 @@ export const LandingPage: React.FC = () => {
                   onClick={handleHeroCta}
                   className="px-8 py-4 bg-emerald-900 hover:bg-emerald-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center space-x-3 text-base cursor-pointer"
                 >
-                  <span>{language === 'ta' ? 'என் பண்ணையை பகுப்பாய்வு செய்' : 'Analyse My Farm'}</span>
+                  <span>{isTa ? 'என் பண்ணையை பகுப்பாய்வு செய்' : 'Analyse My Farm'}</span>
                   <ArrowRight className="w-5 h-5 text-emerald-300" />
                 </button>
                 <a
                   href="#how-it-works"
                   className="px-7 py-4 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-semibold rounded-xl transition-colors text-center text-base"
                 >
-                  {language === 'ta' ? 'செயல்படும் முறையை அறிய' : 'Explore How It Works'}
+                  {isTa ? 'செயல்படும் முறையை அறிய' : 'Explore How It Works'}
                 </a>
               </div>
 
@@ -343,22 +345,22 @@ export const LandingPage: React.FC = () => {
               <div className="pt-4 border-t border-slate-200/80 flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-600">
                 <span className="px-3 py-1.5 rounded-md bg-white border border-slate-200 flex items-center space-x-1.5">
                   <CloudRain className="w-3.5 h-3.5 text-emerald-700" />
-                  <span>{language === 'ta' ? 'மழையளவு' : 'Rainfall'}</span>
+                  <span>{isTa ? 'மழையளவு' : 'Rainfall'}</span>
                 </span>
                 <span className="text-slate-300">•</span>
                 <span className="px-3 py-1.5 rounded-md bg-white border border-slate-200 flex items-center space-x-1.5">
                   <Layers className="w-3.5 h-3.5 text-amber-700" />
-                  <span>{language === 'ta' ? 'மண்' : 'Soil'}</span>
+                  <span>{isTa ? 'மண்' : 'Soil'}</span>
                 </span>
                 <span className="text-slate-300">•</span>
                 <span className="px-3 py-1.5 rounded-md bg-white border border-slate-200 flex items-center space-x-1.5">
                   <Sprout className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>{language === 'ta' ? 'பயிர் பருவம்' : 'Crop Stage'}</span>
+                  <span>{isTa ? 'பயிர் பருவம்' : 'Crop Stage'}</span>
                 </span>
                 <span className="text-slate-300">•</span>
                 <span className="px-3 py-1.5 rounded-md bg-white border border-slate-200 flex items-center space-x-1.5">
                   <Droplets className="w-3.5 h-3.5 text-blue-600" />
-                  <span>{language === 'ta' ? 'நீர் தேக்கம்' : 'Waterlogging'}</span>
+                  <span>{isTa ? 'நீர் தேக்கம்' : 'Waterlogging'}</span>
                 </span>
               </div>
             </div>
@@ -380,21 +382,21 @@ export const LandingPage: React.FC = () => {
                     <div className="flex items-center space-x-2">
                       <div className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></div>
                       <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
-                        {language === 'ta' ? 'நேரலை மாதிரி முன்னோட்டம்' : 'Live Farm Model Preview'}
+                        {isTa ? 'நேரலை மாதிரி முன்னோட்டம்' : 'Live Farm Model Preview'}
                       </span>
                     </div>
                     <span className="text-[11px] font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full">
-                      {language === 'ta' ? 'தஞ்சாவூர் நெல் வயல்' : 'Tanjore Paddy Field'}
+                      {isTa ? 'தஞ்சாவூர் நெல் வயல்' : 'Tanjore Paddy Field'}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-100">
                     <div>
-                      <span className="text-slate-500 block text-[10px]">{language === 'ta' ? '24 மணி நேர மழை அபாயம்' : '24h Rain Risk'}</span>
-                      <span className="font-semibold text-emerald-900">{language === 'ta' ? 'குறைந்த அபாயம்' : 'Low Wash Risk'}</span>
+                      <span className="text-slate-500 block text-[10px]">{isTa ? '24 மணி நேர மழை அபாயம்' : '24h Rain Risk'}</span>
+                      <span className="font-semibold text-emerald-900">{isTa ? 'குறைந்த அபாயம்' : 'Low Wash Risk'}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block text-[10px]">{language === 'ta' ? 'நீர் தேக்க அபாயம்' : 'Waterlogging'}</span>
-                      <span className="font-semibold text-emerald-900">{language === 'ta' ? 'மிதமான அபாயம்' : 'Moderate'}</span>
+                      <span className="text-slate-500 block text-[10px]">{isTa ? 'நீர் தேக்க அபாயம்' : 'Waterlogging'}</span>
+                      <span className="font-semibold text-emerald-900">{isTa ? 'மிதமான அபாயம்' : 'Moderate'}</span>
                     </div>
                   </div>
                 </div>
@@ -405,20 +407,21 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ========================================================= */}
-      {/* SECTION 2 — WHY THIS PROJECT */}
+      {/* SECTION 2 — WHY THIS PLATFORM */}
       {/* ========================================================= */}
       <section className="py-20 md:py-28 bg-[#07261c] text-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-3 block">
-              MSc Research Context
+              {isTa ? 'வேளாண் நுண்ணறிவு பின்னணி' : 'Agricultural Intelligence Context'}
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-6 leading-tight">
-              From Weather Warning to Crop Impact
+              {isTa ? 'வானிலை எச்சரிக்கையிலிருந்து பயிர் பாதிப்பிற்கு' : 'From Weather Warning to Crop Impact'}
             </h2>
             <p className="text-lg text-emerald-100/90 leading-relaxed font-light">
-              A heavy-rain warning tells us that extreme weather may occur. Farmers also need to
-              understand what that rainfall could mean for the crop growing on their specific farm.
+              {isTa
+                ? 'கனமழை எச்சரிக்கை தீவிர வானிலை நிகழக்கூடும் என்பதை மட்டுமே கூறுகிறது. ஆனால் தங்கள் பண்ணையில் வளரும் பயிருக்கு அந்த மழை என்ன பாதிப்பை ஏற்படுத்தும் என்பதை விவசாயிகள் துல்லியமாக அறிய வேண்டும்.'
+                : 'A heavy-rain warning tells us that extreme weather may occur. Farmers also need to understand what that rainfall could mean for the crop growing on their specific farm.'}
             </p>
           </div>
 
@@ -430,14 +433,18 @@ export const LandingPage: React.FC = () => {
                 <span className="text-3xl font-extrabold text-emerald-400/60 block mb-4 group-hover:text-emerald-300 transition-colors">
                   01
                 </span>
-                <h3 className="text-xl font-bold text-white mb-3">Farm-Specific Analysis</h3>
+                <h3 className="text-xl font-bold text-white mb-3">
+                  {isTa ? 'பண்ணை சார்ந்த பகுப்பாய்வு' : 'Farm-Specific Analysis'}
+                </h3>
                 <p className="text-sm text-emerald-100/80 leading-relaxed">
-                  Analyse rainfall in the context of the actual farm location and conditions.
+                  {isTa
+                    ? 'உண்மையான பண்ணை அமைவிடம் மற்றும் உள்ளூர் சூழல்களின் அடிப்படையில் மழையைப் பகுப்பாய்வு செய்தல்.'
+                    : 'Analyse rainfall in the context of the actual farm location and conditions.'}
                 </p>
               </div>
               <div className="mt-8 pt-4 border-t border-emerald-800/40 flex items-center text-xs font-semibold text-emerald-300">
                 <MapPin className="w-4 h-4 mr-2 text-emerald-400" />
-                <span>Geospatial Boundary</span>
+                <span>{isTa ? 'புவியியல் எல்லை' : 'Geospatial Boundary'}</span>
               </div>
             </div>
 
@@ -447,15 +454,18 @@ export const LandingPage: React.FC = () => {
                 <span className="text-3xl font-extrabold text-emerald-400/60 block mb-4 group-hover:text-emerald-300 transition-colors">
                   02
                 </span>
-                <h3 className="text-xl font-bold text-white mb-3">Crop & Growth Stage</h3>
+                <h3 className="text-xl font-bold text-white mb-3">
+                  {isTa ? 'பயிர் & வளர்ச்சி நிலை' : 'Crop & Growth Stage'}
+                </h3>
                 <p className="text-sm text-emerald-100/80 leading-relaxed">
-                  Consider crop type, crop age and growth stage instead of treating every crop
-                  equally.
+                  {isTa
+                    ? 'எல்லா பயிர்களையும் ஒன்றாகக் கருதாமல், பயிர் வகை, பயிர் வயது மற்றும் வளர்ச்சி நிலையை கணக்கில் கொள்ளுதல்.'
+                    : 'Consider crop type, crop age and growth stage instead of treating every crop equally.'}
                 </p>
               </div>
               <div className="mt-8 pt-4 border-t border-emerald-800/40 flex items-center text-xs font-semibold text-emerald-300">
                 <Sprout className="w-4 h-4 mr-2 text-emerald-400" />
-                <span>Agronomic Stage Sensitivity</span>
+                <span>{isTa ? 'பருவ வளர்ச்சி உணர்திறன்' : 'Agronomic Stage Sensitivity'}</span>
               </div>
             </div>
 
@@ -465,15 +475,18 @@ export const LandingPage: React.FC = () => {
                 <span className="text-3xl font-extrabold text-emerald-400/60 block mb-4 group-hover:text-emerald-300 transition-colors">
                   03
                 </span>
-                <h3 className="text-xl font-bold text-white mb-3">Waterlogging Intelligence</h3>
+                <h3 className="text-xl font-bold text-white mb-3">
+                  {isTa ? 'நீர் தேக்க நுண்ணறிவு' : 'Waterlogging Intelligence'}
+                </h3>
                 <p className="text-sm text-emerald-100/80 leading-relaxed">
-                  Combine rainfall, previous rainfall, soil wetness and drainage to assess
-                  waterlogging risk.
+                  {isTa
+                    ? 'மழையளவு, முந்தைய மழை, மண் ஈரப்பதம் மற்றும் வடிகால் ஆகியவற்றை இணைத்து நீர் தேக்க அபாயத்தை மதிப்பிடுதல்.'
+                    : 'Combine rainfall, previous rainfall, soil wetness and drainage to assess waterlogging risk.'}
                 </p>
               </div>
               <div className="mt-8 pt-4 border-t border-emerald-800/40 flex items-center text-xs font-semibold text-emerald-300">
                 <Droplets className="w-4 h-4 mr-2 text-emerald-400" />
-                <span>Soil & Antecedent Moisture</span>
+                <span>{isTa ? 'மண் & முந்தைய ஈரப்பதம்' : 'Soil & Antecedent Moisture'}</span>
               </div>
             </div>
 
@@ -483,14 +496,18 @@ export const LandingPage: React.FC = () => {
                 <span className="text-3xl font-extrabold text-emerald-400/60 block mb-4 group-hover:text-emerald-300 transition-colors">
                   04
                 </span>
-                <h3 className="text-xl font-bold text-white mb-3">Recovery Insight</h3>
+                <h3 className="text-xl font-bold text-white mb-3">
+                  {isTa ? 'மீட்பு வழிகாட்டல்' : 'Recovery Insight'}
+                </h3>
                 <p className="text-sm text-emerald-100/80 leading-relaxed">
-                  Evaluate potential crop survival and recovery after a severe rainfall event.
+                  {isTa
+                    ? 'கனமழை நிகழ்விற்குப் பிறகு சாத்தியமான பயிர் உயிர்வாழ்வு மற்றும் மீட்பு திறனை மதிப்பாய்வு செய்தல்.'
+                    : 'Evaluate potential crop survival and recovery after a severe rainfall event.'}
                 </p>
               </div>
               <div className="mt-8 pt-4 border-t border-emerald-800/40 flex items-center text-xs font-semibold text-emerald-300">
                 <RotateCcw className="w-4 h-4 mr-2 text-emerald-400" />
-                <span>Post-Event Assessment</span>
+                <span>{isTa ? 'நிகழ்வுக்குப் பிந்தைய மதிப்பீடு' : 'Post-Event Assessment'}</span>
               </div>
             </div>
           </div>
@@ -498,35 +515,35 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ========================================================= */}
-      {/* SECTION 3 — CORE PROJECT STATEMENT */}
+      {/* SECTION 3 — CORE SCIENTIFIC PRINCIPLE */}
       {/* ========================================================= */}
       <section className="py-20 md:py-28 bg-white text-slate-900 border-b border-slate-100">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
           <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-            Core Scientific Hypothesis
+            {isTa ? 'அடிப்படைக் கோட்பாடு' : 'Core Scientific Principle'}
           </span>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
-            "Rainfall alone does not determine crop damage."
+            {isTa ? '"மழையளவு மட்டுமே பயிர் சேதத்தைத் தீர்மானிப்பதில்லை."' : '"Rainfall alone does not determine crop damage."'}
           </h2>
 
           <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto font-normal leading-relaxed">
-            Our approach combines weather conditions with crop stage, soil, drainage, previous
-            rainfall and waterlogging risk to create more meaningful farm-level crop-impact
-            analysis.
+            {isTa
+              ? 'எங்கள் அணுகுமுறை வானிலை நிலைமைகளுடன் பயிர் வளர்ச்சி நிலை, மண் வகை, வடிகால், முந்தைய மழை மற்றும் நீர் தேக்க அபாயத்தை ஒருங்கிணைத்து மிகவும் பயனுள்ள பண்ணை அளவிலான பயிர் பாதிப்பு பகுப்பாய்வை உருவாக்குகிறது.'
+              : 'Our approach combines weather conditions with crop stage, soil, drainage, previous rainfall and waterlogging risk to create more meaningful farm-level crop-impact analysis.'}
           </p>
 
           {/* Visual Factor Flow Diagram */}
           <div className="pt-10 max-w-4xl mx-auto">
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-6">
               {[
-                { name: 'Rainfall', icon: CloudRain, color: 'text-blue-600' },
-                { name: 'Previous Rain', icon: Calendar, color: 'text-indigo-600' },
-                { name: 'Crop Stage', icon: Sprout, color: 'text-emerald-600' },
-                { name: 'Soil Profile', icon: Layers, color: 'text-amber-700' },
-                { name: 'Soil Moisture', icon: Droplets, color: 'text-cyan-600' },
-                { name: 'Drainage', icon: Compass, color: 'text-teal-600' },
-                { name: 'Waterlogging', icon: Activity, color: 'text-red-600' },
+                { name: isTa ? 'மழையளவு' : 'Rainfall', icon: CloudRain, color: 'text-blue-600' },
+                { name: isTa ? 'முந்தைய மழை' : 'Previous Rain', icon: Calendar, color: 'text-indigo-600' },
+                { name: isTa ? 'பயிர் பருவம்' : 'Crop Stage', icon: Sprout, color: 'text-emerald-600' },
+                { name: isTa ? 'மண் விவரம்' : 'Soil Profile', icon: Layers, color: 'text-amber-700' },
+                { name: isTa ? 'மண் ஈரப்பதம்' : 'Soil Moisture', icon: Droplets, color: 'text-cyan-600' },
+                { name: isTa ? 'வடிகால்' : 'Drainage', icon: Compass, color: 'text-teal-600' },
+                { name: isTa ? 'நீர் தேக்கம்' : 'Waterlogging', icon: Activity, color: 'text-red-600' },
               ].map((factor, idx) => (
                 <div
                   key={idx}
@@ -542,7 +559,7 @@ export const LandingPage: React.FC = () => {
             <div className="flex items-center justify-center space-x-3 text-slate-400 py-2">
               <div className="h-px bg-slate-200 flex-1 max-w-xs"></div>
               <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full">
-                INTEGRATED HYBRID ENGINE
+                {isTa ? 'ஒருங்கிணைந்த கலப்பின இயந்திரம்' : 'INTEGRATED HYBRID ENGINE'}
               </span>
               <div className="h-px bg-slate-200 flex-1 max-w-xs"></div>
             </div>
@@ -552,9 +569,11 @@ export const LandingPage: React.FC = () => {
               <ShieldCheck className="w-8 h-8 text-emerald-400 shrink-0" />
               <div className="text-left">
                 <span className="text-xs uppercase tracking-wider text-emerald-300 font-bold block">
-                  Scientific Output
+                  {isTa ? 'அறிவியல் வெளியீடு' : 'Scientific Output'}
                 </span>
-                <span className="text-xl font-bold tracking-tight">FARM CROP IMPACT ASSESSMENT</span>
+                <span className="text-xl font-bold tracking-tight">
+                  {isTa ? 'பண்ணை பயிர் பாதிப்பு மதிப்பீடு' : 'FARM CROP IMPACT ASSESSMENT'}
+                </span>
               </div>
             </div>
           </div>
@@ -568,14 +587,15 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 mb-2 block">
-              Step-by-Step Workflow
+              {isTa ? 'படிநிலைப் பணிப்பாய்வு' : 'Step-by-Step Workflow'}
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-4">
-              From Farm Location to Crop Insight
+              {isTa ? 'பண்ணை அமைவிடத்திலிருந்து பயிர் நுண்ணறிவு வரை' : 'From Farm Location to Crop Insight'}
             </h2>
             <p className="text-slate-600 text-base sm:text-lg">
-              A simple workflow converts weather and farm information into understandable risk
-              guidance.
+              {isTa
+                ? 'வானிலை மற்றும் பண்ணை தகவல்களை எளிதில் புரிந்து கொள்ளக்கூடிய அபாய வழிகாட்டுதலாக மாற்றும் எளிய வழிமுறை.'
+                : 'A simple workflow converts weather and farm information into understandable risk guidance.'}
             </p>
           </div>
 
@@ -584,38 +604,38 @@ export const LandingPage: React.FC = () => {
             {[
               {
                 step: '1',
-                title: 'Map Your Farm',
-                desc: 'Locate the farm on interactive maps and draw its actual spatial boundary.',
+                title: isTa ? 'பண்ணையை வரைபடத்தில் குறிக்க' : 'Map Your Farm',
+                desc: isTa ? 'ஊடாடும் வரைபடத்தில் பண்ணையைக் கண்டறிந்து உண்மையான எல்லையை வரையவும்.' : 'Locate the farm on interactive maps and draw its actual spatial boundary.',
                 icon: MapPin,
               },
               {
                 step: '2',
-                title: 'Add Your Crop',
-                desc: 'Select the crop, planting date and current growth stage.',
+                title: isTa ? 'பயிரைச் சேர்க்கவும்' : 'Add Your Crop',
+                desc: isTa ? 'பயிர் வகை, விதைக்கப்பட்ட தேதி மற்றும் தற்போதைய வளர்ச்சி நிலையைத் தேர்ந்தெடுக்கவும்.' : 'Select the crop, planting date and current growth stage.',
                 icon: Sprout,
               },
               {
                 step: '3',
-                title: 'Understand Farm Conditions',
-                desc: 'Combine soil profile, drainage and recent antecedent weather.',
+                title: isTa ? 'பண்ணை நிலையைப் புரிந்து கொள்ள' : 'Understand Farm Conditions',
+                desc: isTa ? 'மண் வகை, வடிகால் வசதி மற்றும் சமீபத்திய முந்தைய வானிலையை இணைக்கவும்.' : 'Combine soil profile, drainage and recent antecedent weather.',
                 icon: Layers,
               },
               {
                 step: '4',
-                title: 'Analyse Rainfall',
-                desc: 'Evaluate forecast rainfall, rainfall intensity and antecedent rainfall.',
+                title: isTa ? 'மழையைப் பகுப்பாய்வு செய்ய' : 'Analyse Rainfall',
+                desc: isTa ? 'முன்னறிவிப்பு மழை, மழை தீவிரம் மற்றும் முந்தைய மழையளவை மதிப்பீடு செய்யவும்.' : 'Evaluate forecast rainfall, rainfall intensity and antecedent rainfall.',
                 icon: CloudRain,
               },
               {
                 step: '5',
-                title: 'Assess Crop Impact',
-                desc: 'Estimate waterlogging, crop damage, survival and recovery potential.',
+                title: isTa ? 'பயிர் பாதிப்பை கணிக்க' : 'Assess Crop Impact',
+                desc: isTa ? 'நீர் தேக்கம், பயிர் சேதம், உயிர்வாழ்வு மற்றும் மீட்பு சாத்தியத்தை மதிப்பிடவும்.' : 'Estimate waterlogging, crop damage, survival and recovery potential.',
                 icon: Activity,
               },
               {
                 step: '6',
-                title: 'Take Action',
-                desc: 'Receive understandable explanations and farmer-focused recommendations.',
+                title: isTa ? 'நடவடிக்கை எடுக்க' : 'Take Action',
+                desc: isTa ? 'எளிதில் புரியும் விளக்கங்கள் மற்றும் விவசாயிகளுக்கான ஆலோசனைகளைப் பெறவும்.' : 'Receive understandable explanations and farmer-focused recommendations.',
                 icon: ShieldCheck,
               },
             ].map((item, idx) => (
@@ -647,14 +667,14 @@ export const LandingPage: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 mb-2 block">
-                Multi-Dimensional Risk Signals
+                {isTa ? 'பல்நோக்கு அபாய சிக்னல்கள்' : 'Multi-Dimensional Risk Signals'}
               </span>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">
-                One Analysis. Multiple Crop-Risk Signals.
+                {isTa ? 'ஒரு பகுப்பாய்வு. பல பயிர் அபாய சிக்னல்கள்.' : 'One Analysis. Multiple Crop-Risk Signals.'}
               </h2>
             </div>
             <span className="mt-4 md:mt-0 text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full self-start md:self-auto">
-              Decision-Support Engine
+              {isTa ? 'முடிவு ஆதரவு இயந்திரம்' : 'Decision-Support Engine'}
             </span>
           </div>
 
@@ -664,20 +684,26 @@ export const LandingPage: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
-                    APPLICATION RAIN RISK
+                    {isTa ? 'உள்ளீட்டு மழை அபாயம்' : 'APPLICATION RAIN RISK'}
                   </span>
                   <span className="text-[10px] uppercase font-bold text-slate-400 bg-white px-2 py-0.5 rounded border border-slate-200">
-                    24h / 48h Window
+                    {isTa ? '24 மணி / 48 மணி சாளரம்' : '24h / 48h Window'}
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">Fertilizer & Spray Wash Risk</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">
+                  {isTa ? 'உரங்கள் & மருந்து கரைசல் அபாயம்' : 'Fertilizer & Spray Wash Risk'}
+                </h3>
                 <p className="text-sm text-slate-600 mb-4">
-                  Estimates the likelihood of agricultural sprays or field inputs being washed away by upcoming rain.
+                  {isTa
+                    ? 'வரவிருக்கும் மழையால் தெளிக்கப்பட்ட மருந்துகள் அல்லது வயல் உரங்கள் அடித்துச் செல்லப்படும் அபாயத்தை மதிப்பிடுகிறது.'
+                    : 'Estimates the likelihood of agricultural sprays or field inputs being washed away by upcoming rain.'}
                 </p>
               </div>
               <div className="flex items-center justify-between pt-4 border-t border-slate-200/60 text-xs font-semibold text-slate-700">
-                <span>Risk Scale</span>
-                <span className="text-emerald-800 font-bold">Low • Moderate • High • Extreme</span>
+                <span>{isTa ? 'அபாய அளவு' : 'Risk Scale'}</span>
+                <span className="text-emerald-800 font-bold">
+                  {isTa ? 'குறைவு • மிதம் • அதிகம் • தீவிர' : 'Low • Moderate • High • Extreme'}
+                </span>
               </div>
             </div>
 
@@ -686,20 +712,26 @@ export const LandingPage: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-bold uppercase tracking-wider text-blue-800">
-                    WATERLOGGING RISK
+                    {isTa ? 'நீர் தேக்க அபாயம்' : 'WATERLOGGING RISK'}
                   </span>
                   <span className="text-[10px] uppercase font-bold text-slate-400 bg-white px-2 py-0.5 rounded border border-slate-200">
-                    Soil & Drainage
+                    {isTa ? 'மண் & வடிகால்' : 'Soil & Drainage'}
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">Root Zone Saturation</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">
+                  {isTa ? 'வேர் மண்டல நீர் செறிவு' : 'Root Zone Saturation'}
+                </h3>
                 <p className="text-sm text-slate-600 mb-4">
-                  Combines rainfall intensity, antecedent rain, soil texture and farm drainage class.
+                  {isTa
+                    ? 'மழை தீவிரம், முந்தைய மழை, மண் அமைப்பு மற்றும் பண்ணை வடிகால் வகுப்பை ஒருங்கிணைக்கிறது.'
+                    : 'Combines rainfall intensity, antecedent rain, soil texture and farm drainage class.'}
                 </p>
               </div>
               <div className="flex items-center justify-between pt-4 border-t border-slate-200/60 text-xs font-semibold text-slate-700">
-                <span>Risk Scale</span>
-                <span className="text-blue-800 font-bold">Low • Moderate • High • Critical</span>
+                <span>{isTa ? 'அபாய அளவு' : 'Risk Scale'}</span>
+                <span className="text-blue-800 font-bold">
+                  {isTa ? 'குறைவு • மிதம் • அதிகம் • கவலைக்கிடம்' : 'Low • Moderate • High • Critical'}
+                </span>
               </div>
             </div>
 
@@ -708,20 +740,26 @@ export const LandingPage: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-bold uppercase tracking-wider text-amber-800">
-                    CROP DAMAGE RISK
+                    {isTa ? 'பயிர் சேத அபாயம்' : 'CROP DAMAGE RISK'}
                   </span>
                   <span className="text-[10px] uppercase font-bold text-slate-400 bg-white px-2 py-0.5 rounded border border-slate-200">
-                    Hybrid ML Engine
+                    {isTa ? 'கலப்பின ML இயந்திரம்' : 'Hybrid ML Engine'}
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">Physiological Stress</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">
+                  {isTa ? 'உயிரியல் அழுத்த பாதிப்பு' : 'Physiological Stress'}
+                </h3>
                 <p className="text-sm text-slate-600 mb-4">
-                  Understand potential rainfall-related crop stress considering crop age and growth stage.
+                  {isTa
+                    ? 'பயிர் வயது மற்றும் வளர்ச்சி நிலையை கணக்கில் கொண்டு மழை தொடர்பான பயிர் அழுத்தத்தைப் புரிந்து கொள்ளுதல்.'
+                    : 'Understand potential rainfall-related crop stress considering crop age and growth stage.'}
                 </p>
               </div>
               <div className="flex items-center justify-between pt-4 border-t border-slate-200/60 text-xs font-semibold text-slate-700">
-                <span>Severity Level</span>
-                <span className="text-amber-800 font-bold">Low • Moderate • High • Severe</span>
+                <span>{isTa ? 'தீவிர நிலை' : 'Severity Level'}</span>
+                <span className="text-amber-800 font-bold">
+                  {isTa ? 'குறைவு • மிதம் • அதிகம் • கடுமையான' : 'Low • Moderate • High • Severe'}
+                </span>
               </div>
             </div>
 
@@ -730,20 +768,26 @@ export const LandingPage: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
-                    SURVIVAL POTENTIAL
+                    {isTa ? 'உயிர்வாழ்வு சாத்தியம்' : 'SURVIVAL POTENTIAL'}
                   </span>
                   <span className="text-[10px] uppercase font-bold text-slate-400 bg-white px-2 py-0.5 rounded border border-slate-200">
-                    Submergence Tolerance
+                    {isTa ? 'நீரில் மூழ்குதல் தாங்குதிறன்' : 'Submergence Tolerance'}
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">Plant Survival Likelihood</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">
+                  {isTa ? 'செடி உயிர்வாழும் சாத்தியம்' : 'Plant Survival Likelihood'}
+                </h3>
                 <p className="text-sm text-slate-600 mb-4">
-                  Assess the crop's potential to withstand the submergence event without total plant loss.
+                  {isTa
+                    ? 'முழுமையான பயிர் இழப்பு ஏற்படாமல் வெள்ள நீரில் மூழ்குவதை பயிர் தாங்கும் திறனை மதிப்பிடுதல்.'
+                    : 'Assess the crop\'s potential to withstand the submergence event without total plant loss.'}
                 </p>
               </div>
               <div className="flex items-center justify-between pt-4 border-t border-slate-200/60 text-xs font-semibold text-slate-700">
-                <span>Potential Level</span>
-                <span className="text-emerald-800 font-bold">Low • Medium • High</span>
+                <span>{isTa ? 'சாத்திய நிலை' : 'Potential Level'}</span>
+                <span className="text-emerald-800 font-bold">
+                  {isTa ? 'குறைவு • நடுத்தரம் • அதிகம்' : 'Low • Medium • High'}
+                </span>
               </div>
             </div>
 
@@ -752,20 +796,26 @@ export const LandingPage: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-bold uppercase tracking-wider text-teal-800">
-                    RECOVERY POTENTIAL
+                    {isTa ? 'மீட்பு சாத்தியம்' : 'RECOVERY POTENTIAL'}
                   </span>
                   <span className="text-[10px] uppercase font-bold text-slate-400 bg-white px-2 py-0.5 rounded border border-slate-200">
-                    Post-Rain Tracking
+                    {isTa ? 'மழைக்கு பிந்தைய கண்காணிப்பு' : 'Post-Rain Tracking'}
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">Post-Drainage Rebound</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">
+                  {isTa ? 'வடிகாலுக்குப் பிந்தைய மீட்சி' : 'Post-Drainage Rebound'}
+                </h3>
                 <p className="text-sm text-slate-600 mb-4">
-                  Understand recovery potential after water drains and field management interventions occur.
+                  {isTa
+                    ? 'தண்ணீர் வடிந்த பிறகும் வயல் மேலாண்மை நடவடிக்கைகளுக்குப் பிறகும் பயிர் மீண்டு வரும் சாத்தியத்தைப் புரிந்து கொள்ளுதல்.'
+                    : 'Understand recovery potential after water drains and field management interventions occur.'}
                 </p>
               </div>
               <div className="flex items-center justify-between pt-4 border-t border-slate-200/60 text-xs font-semibold text-slate-700">
-                <span>Potential Level</span>
-                <span className="text-teal-800 font-bold">Low • Medium • High</span>
+                <span>{isTa ? 'சாத்திய நிலை' : 'Potential Level'}</span>
+                <span className="text-teal-800 font-bold">
+                  {isTa ? 'குறைவு • நடுத்தரம் • அதிகம்' : 'Low • Medium • High'}
+                </span>
               </div>
             </div>
 
@@ -774,20 +824,26 @@ export const LandingPage: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-bold uppercase tracking-wider text-rose-800">
-                    CROP LOSS RISK
+                    {isTa ? 'பயிர் இழப்பு அபாயம்' : 'CROP LOSS RISK'}
                   </span>
                   <span className="text-[10px] uppercase font-bold text-slate-400 bg-white px-2 py-0.5 rounded border border-slate-200">
-                    Qualitative Classification
+                    {isTa ? 'தரநிலைப் பகுப்பாய்வு' : 'Qualitative Classification'}
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">Qualitative Risk Summary</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">
+                  {isTa ? 'ஒட்டுமொத்த இழப்பு அபாயச் சுருக்கம்' : 'Qualitative Risk Summary'}
+                </h3>
                 <p className="text-sm text-slate-600 mb-4">
-                  Present an understandable qualitative loss-risk classification for overall decision support.
+                  {isTa
+                    ? 'ஒட்டுமொத்த விவசாய முடிவுகளுக்கு உதவ எளிதில் புரிந்து கொள்ளக்கூடிய இழப்பு அபாய நிலையை வழங்குதல்.'
+                    : 'Present an understandable qualitative loss-risk classification for overall decision support.'}
                 </p>
               </div>
               <div className="flex items-center justify-between pt-4 border-t border-slate-200/60 text-xs font-semibold text-slate-700">
-                <span>Loss Level</span>
-                <span className="text-rose-800 font-bold">Low • Moderate • High</span>
+                <span>{isTa ? 'இழப்பு நிலை' : 'Loss Level'}</span>
+                <span className="text-rose-800 font-bold">
+                  {isTa ? 'குறைவு • மிதம் • அதிகம்' : 'Low • Moderate • High'}
+                </span>
               </div>
             </div>
           </div>
@@ -810,7 +866,9 @@ export const LandingPage: React.FC = () => {
                   <div className="relative z-10 flex items-center justify-between bg-slate-950/80 backdrop-blur-md p-3 rounded-lg border border-slate-800">
                     <div className="flex items-center space-x-2">
                       <MapPin className="w-4 h-4 text-emerald-400" />
-                      <span className="text-xs font-bold text-slate-200">PostGIS Polygon Storage</span>
+                      <span className="text-xs font-bold text-slate-200">
+                        {isTa ? 'PostGIS பலகோண எல்லை சேமிப்பு' : 'PostGIS Polygon Storage'}
+                      </span>
                     </div>
                     <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded">
                       EPSG:4326
@@ -825,7 +883,7 @@ export const LandingPage: React.FC = () => {
                       <div className="absolute -bottom-2 -left-2 w-4 h-4 bg-emerald-400 rounded-full border-2 border-slate-900"></div>
                       <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-emerald-400 rounded-full border-2 border-slate-900"></div>
                       <span className="text-xs font-semibold text-emerald-300 bg-slate-900/90 px-3 py-1 rounded-md border border-emerald-500/30">
-                        Farm Boundary: 4.2 Hectares
+                        {isTa ? 'பண்ணை எல்லை: 4.2 ஹெக்டேர்' : 'Farm Boundary: 4.2 Hectares'}
                       </span>
                     </div>
                   </div>
@@ -833,7 +891,7 @@ export const LandingPage: React.FC = () => {
                   <div className="relative z-10 flex items-center justify-between text-xs text-slate-400 bg-slate-950/80 backdrop-blur-md p-2.5 rounded-lg border border-slate-800">
                     <span>Lat: 10.787° N</span>
                     <span>Lon: 79.138° E</span>
-                    <span>Thanjavur, TN</span>
+                    <span>{isTa ? 'தஞ்சாவூர், தமிழ்நாடு' : 'Thanjavur, TN'}</span>
                   </div>
                 </div>
               </div>
@@ -842,23 +900,24 @@ export const LandingPage: React.FC = () => {
             {/* Right Copy */}
             <div className="lg:col-span-6 space-y-6">
               <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                Geospatial Precision
+                {isTa ? 'துல்லிய புவியியல்' : 'Geospatial Precision'}
               </span>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 leading-tight">
-                Every Analysis Starts With the Farm
+                {isTa ? 'ஒவ்வொரு பகுப்பாய்வும் உங்கள் பண்ணையிலிருந்து தொடங்குகிறது' : 'Every Analysis Starts With the Farm'}
               </h2>
               <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
-                Map the actual farm boundary, record crop and drainage conditions, and connect weather
-                information to the location that matters.
+                {isTa
+                  ? 'உண்மையான பண்ணை எல்லையைக் குறிக்கவும், பயிர் மற்றும் வடிகால் நிலைகளைப் பதிவு செய்யவும், முக்கியமான அமைவிடத்துடன் வானிலையை இணைக்கவும்.'
+                  : 'Map the actual farm boundary, record crop and drainage conditions, and connect weather information to the location that matters.'}
               </p>
 
               <div className="space-y-3 pt-2">
                 {[
-                  'GPS-based location resolution',
-                  'Interactive polygon farm boundary mapping',
-                  'Automatic farm area calculation (acres / hectares)',
-                  'PostgreSQL + PostGIS geospatial storage',
-                  'Multiple farm support per farmer profile',
+                  isTa ? 'GPS அடிப்படையிலான துல்லிய அமைவிடம்' : 'GPS-based location resolution',
+                  isTa ? 'ஊடாடும் பலகோண பண்ணை எல்லை வரைபடம்' : 'Interactive polygon farm boundary mapping',
+                  isTa ? 'தானியங்கி பண்ணை பரப்பளவு கணக்கீடு (ஏக்கர் / ஹெக்டேர்)' : 'Automatic farm area calculation (acres / hectares)',
+                  isTa ? 'PostgreSQL + PostGIS புவியியல் தரவுத்தள சேமிப்பு' : 'PostgreSQL + PostGIS geospatial storage',
+                  isTa ? 'ஒரு விவசாயி பல பண்ணைகளை நிர்வகிக்கும் வசதி' : 'Multiple farm support per farmer profile',
                 ].map((feat, idx) => (
                   <div key={idx} className="flex items-center space-x-3 text-sm font-semibold text-slate-700">
                     <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
@@ -872,7 +931,7 @@ export const LandingPage: React.FC = () => {
                   to={isAuthenticated ? '/farms/new' : '/register'}
                   className="inline-flex items-center space-x-2 px-6 py-3.5 bg-emerald-900 hover:bg-emerald-800 text-white font-semibold rounded-xl shadow-md transition-colors"
                 >
-                  <span>Add Your Farm</span>
+                  <span>{isTa ? 'உங்கள் பண்ணையைச் சேர்க்க' : 'Add Your Farm'}</span>
                   <ArrowRight className="w-4 h-4 text-emerald-300" />
                 </Link>
               </div>
@@ -888,26 +947,50 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-2 block">
-              Integrated Weather Engine
+              {isTa ? 'ஒருங்கிணைந்த வானிலை இயந்திரம்' : 'Integrated Weather Engine'}
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">
-              See More Than Tomorrow's Rain
+              {isTa ? 'நாளைய மழையைத் தாண்டி முன்கூட்டியே அறியுங்கள்' : "See More Than Tomorrow's Rain"}
             </h2>
             <p className="text-emerald-100/90 text-base sm:text-lg leading-relaxed">
-              The system considers forecast rainfall together with recent rainfall and available soil
-              conditions to understand whether a farm may already be vulnerable before the next event
-              begins.
+              {isTa
+                ? 'அடுத்த மழை நிகழ்வு தொடங்குவதற்கு முன்பே உங்கள் பண்ணை ஏற்கனவே பாதிக்கப்படக்கூடிய நிலையில் உள்ளதா என்பதை அறிய முன்னறிவிப்பு மழை, முந்தைய மழை மற்றும் மண் ஈரப்பதத்தை இந்த அமைப்பு ஒருங்கிணைக்கிறது.'
+                : 'The system considers forecast rainfall together with recent rainfall and available soil conditions to understand whether a farm may already be vulnerable before the next event begins.'}
             </p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
-              { label: 'Next 24h Rain', desc: 'Immediate input risk window', icon: CloudRain },
-              { label: 'Next 48h Rain', desc: 'Accumulated volume forecast', icon: CloudRain },
-              { label: 'Peak Hourly Rain', desc: 'Intensity & erosion indicator', icon: Wind },
-              { label: 'Previous 72h Rain', desc: 'Antecedent wetness memory', icon: Calendar },
-              { label: 'Continuous Rain', desc: 'Submergence duration indicator', icon: Activity },
-              { label: 'Soil Moisture', desc: 'Root zone saturation ratio', icon: Droplets },
+              {
+                label: isTa ? 'அடுத்த 24 மணி மழை' : 'Next 24h Rain',
+                desc: isTa ? 'உடனடி உள்ளீட்டு அபாய சாளரம்' : 'Immediate input risk window',
+                icon: CloudRain
+              },
+              {
+                label: isTa ? 'அடுத்த 48 மணி மழை' : 'Next 48h Rain',
+                desc: isTa ? 'மொத்த மழை அளவு முன்னறிவிப்பு' : 'Accumulated volume forecast',
+                icon: CloudRain
+              },
+              {
+                label: isTa ? 'உச்ச மணிநேர மழை' : 'Peak Hourly Rain',
+                desc: isTa ? 'மழை தீவிரம் & மண் அரிப்பு குறியீடு' : 'Intensity & erosion indicator',
+                icon: Wind
+              },
+              {
+                label: isTa ? 'முந்தைய 72 மணி மழை' : 'Previous 72h Rain',
+                desc: isTa ? 'முந்தைய ஈரப்பத நினைவகம்' : 'Antecedent wetness memory',
+                icon: Calendar
+              },
+              {
+                label: isTa ? 'தொடர் மழை' : 'Continuous Rain',
+                desc: isTa ? 'வெள்ள நீரில் மூழ்குதல் கால அளவு' : 'Submergence duration indicator',
+                icon: Activity
+              },
+              {
+                label: isTa ? 'மண் ஈரப்பதம்' : 'Soil Moisture',
+                desc: isTa ? 'வேர் மண்டல நீர் செறிவு விகிதம்' : 'Root zone saturation ratio',
+                icon: Droplets
+              },
             ].map((card, idx) => (
               <div
                 key={idx}
@@ -924,7 +1007,11 @@ export const LandingPage: React.FC = () => {
 
           <div className="mt-10 p-4 rounded-xl bg-[#0e3f2e]/60 border border-emerald-800/40 inline-flex items-center space-x-3 text-xs text-emerald-200">
             <Info className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>Weather Data Source: Open-Meteo High-Resolution Meteorological API</span>
+            <span>
+              {isTa
+                ? 'வானிலை தரவு ஆதாரம்: Open-Meteo உயர் தெளிவுத்திறன் வானிலை API'
+                : 'Weather Data Source: Open-Meteo High-Resolution Meteorological API'}
+            </span>
           </div>
         </div>
       </section>
@@ -949,44 +1036,69 @@ export const LandingPage: React.FC = () => {
             {/* Right Explanation Breakdown */}
             <div className="lg:col-span-7 space-y-6">
               <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                Transparent AI Architecture
+                {isTa ? 'வெளிப்படையான AI கட்டமைப்பு' : 'Transparent AI Architecture'}
               </span>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">
-                Not Just a Risk Level. <br />
-                <span className="text-emerald-900">Understand Why.</span>
+                {isTa ? (
+                  <>
+                    வெறும் அபாய நிலை மட்டுமல்ல. <br />
+                    <span className="text-emerald-900">ஏன் என்று புரிந்து கொள்ளுங்கள்.</span>
+                  </>
+                ) : (
+                  <>
+                    Not Just a Risk Level. <br />
+                    <span className="text-emerald-900">Understand Why.</span>
+                  </>
+                )}
               </h2>
 
               {/* Explanation Card */}
               <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                   <span className="text-xs font-extrabold uppercase tracking-wider text-slate-800">
-                    EXAMPLE EXPLANATION SUMMARY
+                    {isTa ? 'மாதிரி விளக்கச் சுருக்கம்' : 'EXAMPLE EXPLANATION SUMMARY'}
                   </span>
                   <span className="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full">
-                    Hybrid: ML + TNAU Agronomic Rules
+                    {isTa ? 'கலப்பினம்: ML + TNAU வேளாண் விதிகள்' : 'Hybrid: ML + TNAU Agronomic Rules'}
                   </span>
                 </div>
 
                 <ul className="space-y-2.5 text-sm text-slate-700">
                   <li className="flex items-start space-x-2.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-2 shrink-0"></span>
-                    <span>High rainfall is expected during the next 24 hours.</span>
+                    <span>
+                      {isTa
+                        ? 'அடுத்த 24 மணி நேரத்தில் அதிக மழை எதிர்பார்க்கப்படுகிறது.'
+                        : 'High rainfall is expected during the next 24 hours.'}
+                    </span>
                   </li>
                   <li className="flex items-start space-x-2.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-2 shrink-0"></span>
-                    <span>Recent rainfall indicates wetter antecedent conditions.</span>
+                    <span>
+                      {isTa
+                        ? 'சமீபத்திய மழை முந்தைய ஈரப்பத நிலையைக் குறிக்கிறது.'
+                        : 'Recent rainfall indicates wetter antecedent conditions.'}
+                    </span>
                   </li>
                   <li className="flex items-start space-x-2.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-2 shrink-0"></span>
-                    <span>Soil moisture is elevated.</span>
+                    <span>
+                      {isTa ? 'மண் ஈரப்பதம் அதிகரித்துள்ளது.' : 'Soil moisture is elevated.'}
+                    </span>
                   </li>
                   <li className="flex items-start space-x-2.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-2 shrink-0"></span>
-                    <span>Farm drainage is limited.</span>
+                    <span>
+                      {isTa ? 'பண்ணை வடிகால் வசதி குறைவாக உள்ளது.' : 'Farm drainage is limited.'}
+                    </span>
                   </li>
                   <li className="flex items-start space-x-2.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-2 shrink-0"></span>
-                    <span>The crop's current growth stage may increase sensitivity.</span>
+                    <span>
+                      {isTa
+                        ? 'பயிரின் தற்போதைய வளர்ச்சி நிலை பாதிப்பு உணர்திறனை அதிகரிக்கக்கூடும்.'
+                        : "The crop's current growth stage may increase sensitivity."}
+                    </span>
                   </li>
                 </ul>
               </div>
@@ -994,9 +1106,9 @@ export const LandingPage: React.FC = () => {
               <div>
                 <button
                   onClick={handleHeroCta}
-                  className="inline-flex items-center space-x-2 px-6 py-3.5 bg-emerald-900 hover:bg-emerald-800 text-white font-semibold rounded-xl shadow-sm transition-colors"
+                  className="inline-flex items-center space-x-2 px-6 py-3.5 bg-emerald-900 hover:bg-emerald-800 text-white font-semibold rounded-xl shadow-sm transition-colors cursor-pointer"
                 >
-                  <span>Explore Crop Analysis</span>
+                  <span>{isTa ? 'பயிர் பகுப்பாய்வை அறிய' : 'Explore Crop Analysis'}</span>
                   <ArrowRight className="w-4 h-4 text-emerald-300" />
                 </button>
               </div>
@@ -1012,24 +1124,45 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 mb-2 block">
-              30-Year Reanalysis Trends
+              {isTa ? '30 ஆண்டு வரலாற்றுப் போக்குகள்' : '30-Year Reanalysis Trends'}
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-4">
-              Understand the Long-Term Climate Context
+              {isTa ? 'நீண்ட கால காலநிலை சூழலைப் புரிந்து கொள்ளுங்கள்' : 'Understand the Long-Term Climate Context'}
             </h2>
             <p className="text-slate-600 text-base sm:text-lg">
-              Explore historical rainfall, temperature and extreme-rainfall indicators to understand
-              how local climate conditions have changed over time.
+              {isTa
+                ? 'உள்ளூர் காலநிலை நிலைமைகள் காலப்போக்கில் எவ்வாறு மாறியுள்ளன என்பதைப் புரிந்து கொள்ள வரலாற்று மழை, வெப்பநிலை மற்றும் தீவிர மழை குறிகாட்டிகளை ஆராயுங்கள்.'
+                : 'Explore historical rainfall, temperature and extreme-rainfall indicators to understand how local climate conditions have changed over time.'}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {[
-              { title: 'Rainfall Trend', desc: 'Linear slope of annual precipitation', icon: TrendingUp },
-              { title: 'Temperature Trend', desc: 'Avg & Max annual thermal shift', icon: Thermometer },
-              { title: 'Heavy Rain Days', desc: 'Frequency of >10mm & >20mm events', icon: CloudRain },
-              { title: 'Extreme Rain Trend', desc: 'Rx1day & Rx5day max daily rainfall', icon: AlertTriangle },
-              { title: 'Seasonal Rainfall', desc: 'Monsoon vs non-monsoon shifts', icon: BarChart3 },
+              {
+                title: isTa ? 'மழைப்பொழிவு போக்கு' : 'Rainfall Trend',
+                desc: isTa ? 'ஆண்டு மழையளவின் நேரியல் சாய்வு' : 'Linear slope of annual precipitation',
+                icon: TrendingUp
+              },
+              {
+                title: isTa ? 'வெப்பநிலை போக்கு' : 'Temperature Trend',
+                desc: isTa ? 'சராசரி & அதிகபட்ச ஆண்டு வெப்ப மாற்றம்' : 'Avg & Max annual thermal shift',
+                icon: Thermometer
+              },
+              {
+                title: isTa ? 'கனமழை நாட்கள்' : 'Heavy Rain Days',
+                desc: isTa ? '>10மிமீ & >20மிமீ நிகழ்வுகளின் எண்ணிக்கை' : 'Frequency of >10mm & >20mm events',
+                icon: CloudRain
+              },
+              {
+                title: isTa ? 'தீவிர மழை போக்கு' : 'Extreme Rain Trend',
+                desc: isTa ? 'Rx1day & Rx5day அதிகபட்ச தினசரி மழை' : 'Rx1day & Rx5day max daily rainfall',
+                icon: AlertTriangle
+              },
+              {
+                title: isTa ? 'பருவமழை அளவு' : 'Seasonal Rainfall',
+                desc: isTa ? 'பருவமழை vs பருவமற்ற மழை மாற்றங்கள்' : 'Monsoon vs non-monsoon shifts',
+                icon: BarChart3
+              },
             ].map((chart, idx) => (
               <div
                 key={idx}
@@ -1043,8 +1176,8 @@ export const LandingPage: React.FC = () => {
                   <p className="text-xs text-slate-500 mb-4">{chart.desc}</p>
                 </div>
                 <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-slate-400">
-                  <span>30-Year Engine</span>
-                  <span className="text-emerald-700">Reanalysis</span>
+                  <span>{isTa ? '30 ஆண்டு இயந்திரம்' : '30-Year Engine'}</span>
+                  <span className="text-emerald-700">{isTa ? 'மறுபகுப்பாய்வு' : 'Reanalysis'}</span>
                 </div>
               </div>
             ))}
@@ -1055,7 +1188,7 @@ export const LandingPage: React.FC = () => {
               to={isAuthenticated ? '/climate-analysis' : '/login'}
               className="inline-flex items-center space-x-2 px-6 py-3.5 bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-semibold rounded-xl transition-colors"
             >
-              <span>Explore Climate Insights</span>
+              <span>{isTa ? 'காலநிலை பார்வைகளை அறிய' : 'Explore Climate Insights'}</span>
               <ArrowRight className="w-4 h-4 text-slate-600" />
             </Link>
           </div>
@@ -1069,10 +1202,10 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 mb-2 block">
-              Agronomic Decision Support
+              {isTa ? 'வேளாண் முடிவு ஆதரவு' : 'Agronomic Decision Support'}
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">
-              Support Across the Rainfall Event
+              {isTa ? 'மழை நிகழ்வின் ஒவ்வொரு கட்டத்திலும் முழு வழிகாட்டல்' : 'Support Across the Rainfall Event'}
             </h2>
           </div>
 
@@ -1081,21 +1214,35 @@ export const LandingPage: React.FC = () => {
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-7 flex flex-col justify-between">
               <div>
                 <span className="text-xs font-extrabold uppercase tracking-widest text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full mb-4 inline-block">
-                  BEFORE RAIN
+                  {isTa ? 'மழைக்கு முன்' : 'BEFORE RAIN'}
                 </span>
-                <h3 className="text-xl font-bold text-slate-900 mb-4">Pre-Event Mitigation</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-4">
+                  {isTa ? 'முன்னெச்சரிக்கை தணிப்பு' : 'Pre-Event Mitigation'}
+                </h3>
                 <ul className="space-y-3 text-sm text-slate-700">
                   <li className="flex items-start space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
-                    <span>Prepare field drainage channels to accelerate runoff.</span>
+                    <span>
+                      {isTa
+                        ? 'மழைநீர் விரைவாக வெளியேற வடிகால் வாய்க்கால்களை தூர்வாரவும்.'
+                        : 'Prepare field drainage channels to accelerate runoff.'}
+                    </span>
                   </li>
                   <li className="flex items-start space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
-                    <span>Review application rain risk before spraying or fertilizing.</span>
+                    <span>
+                      {isTa
+                        ? 'உரமிடல் அல்லது பூச்சிக்கொல்லி தெளிப்பதற்கு முன் உள்ளீட்டு மழை அபாயத்தை சரிபார்க்கவும்.'
+                        : 'Review application rain risk before spraying or fertilizing.'}
+                    </span>
                   </li>
                   <li className="flex items-start space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
-                    <span>Avoid unnecessary irrigation where rainfall is imminent.</span>
+                    <span>
+                      {isTa
+                        ? 'மழை பெய்ய வாய்ப்புள்ளதால் தேவையற்ற பாசனத்தைத் தவிர்க்கவும்.'
+                        : 'Avoid unnecessary irrigation where rainfall is imminent.'}
+                    </span>
                   </li>
                 </ul>
               </div>
@@ -1105,21 +1252,35 @@ export const LandingPage: React.FC = () => {
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-7 flex flex-col justify-between">
               <div>
                 <span className="text-xs font-extrabold uppercase tracking-widest text-blue-800 bg-blue-100 px-3 py-1 rounded-full mb-4 inline-block">
-                  DURING RAIN
+                  {isTa ? 'மழையின் போது' : 'DURING RAIN'}
                 </span>
-                <h3 className="text-xl font-bold text-slate-900 mb-4">In-Event Monitoring</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-4">
+                  {isTa ? 'நிகழ்வின் போது கண்காணிப்பு' : 'In-Event Monitoring'}
+                </h3>
                 <ul className="space-y-3 text-sm text-slate-700">
                   <li className="flex items-start space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
-                    <span>Monitor standing water buildup in low-lying plots.</span>
+                    <span>
+                      {isTa
+                        ? 'பள்ளமான பகுதிகளில் நீர் தேங்குவதைக் கண்காணிக்கவும்.'
+                        : 'Monitor standing water buildup in low-lying plots.'}
+                    </span>
                   </li>
                   <li className="flex items-start space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
-                    <span>Track updated hourly rainfall intensity conditions.</span>
+                    <span>
+                      {isTa
+                        ? 'புதுப்பிக்கப்பட்ட மணிநேர மழை தீவிரத்தைக் கண்காணிக்கவும்.'
+                        : 'Track updated hourly rainfall intensity conditions.'}
+                    </span>
                   </li>
                   <li className="flex items-start space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
-                    <span>Avoid unsafe field operations during heavy downpours.</span>
+                    <span>
+                      {isTa
+                        ? 'கனமழையின் போது பாதுகாப்பற்ற வயல் பணிகளைத் தவிர்க்கவும்.'
+                        : 'Avoid unsafe field operations during heavy downpours.'}
+                    </span>
                   </li>
                 </ul>
               </div>
@@ -1129,21 +1290,35 @@ export const LandingPage: React.FC = () => {
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-7 flex flex-col justify-between">
               <div>
                 <span className="text-xs font-extrabold uppercase tracking-widest text-amber-800 bg-amber-100 px-3 py-1 rounded-full mb-4 inline-block">
-                  AFTER RAIN
+                  {isTa ? 'மழைக்கு பின்' : 'AFTER RAIN'}
                 </span>
-                <h3 className="text-xl font-bold text-slate-900 mb-4">Post-Event Recovery</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-4">
+                  {isTa ? 'நிகழ்வுக்குப் பிந்தைய மீட்பு' : 'Post-Event Recovery'}
+                </h3>
                 <ul className="space-y-3 text-sm text-slate-700">
                   <li className="flex items-start space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
-                    <span>Record standing-water duration and drainage rate.</span>
+                    <span>
+                      {isTa
+                        ? 'தேங்கிய நீரின் கால அளவு மற்றும் வடிகால் வேகத்தைப் பதிவு செய்யவும்.'
+                        : 'Record standing-water duration and drainage rate.'}
+                    </span>
                   </li>
                   <li className="flex items-start space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
-                    <span>Assess visible leaf chlorosis and root health condition.</span>
+                    <span>
+                      {isTa
+                        ? 'இலைகளில் படிந்துள்ள சேறு மற்றும் வேர் ஆரோக்கியத்தை மதிப்பீடு செய்யவும்.'
+                        : 'Assess visible leaf chlorosis and root health condition.'}
+                    </span>
                   </li>
                   <li className="flex items-start space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
-                    <span>Update recovery assessment to guide corrective nutrient care.</span>
+                    <span>
+                      {isTa
+                        ? 'சரியான ஊட்டச்சத்து மேலாண்மைக்கு மீட்பு மதிப்பீட்டைப் புதுப்பிக்கவும்.'
+                        : 'Update recovery assessment to guide corrective nutrient care.'}
+                    </span>
                   </li>
                 </ul>
               </div>
@@ -1160,24 +1335,33 @@ export const LandingPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-6 space-y-6">
               <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                Post-Rain Assessment Module
+                {isTa ? 'மழைக்கு பிந்தைய மீட்பு தொகுதி' : 'Post-Rain Assessment Module'}
               </span>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 leading-tight">
-                What Happens After the Water Drains?
+                {isTa ? 'தண்ணீர் வடிந்த பிறகு என்ன நடக்கும்?' : 'What Happens After the Water Drains?'}
               </h2>
               <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
-                The analysis does not stop when the rainfall ends. Farmers can record standing-water
-                duration and visible crop condition to update the crop recovery assessment.
+                {isTa
+                  ? 'மழை நின்றவுடன் பகுப்பாய்வு முடிந்துவிடுவதில்லை. பயிர் மீட்பு மதிப்பீட்டைப் புதுப்பிக்க விவசாயிகள் தேங்கிய நீரின் கால அளவு மற்றும் பயிர் நிலையைப் பதிவு செய்யலாம்.'
+                  : 'The analysis does not stop when the rainfall ends. Farmers can record standing-water duration and visible crop condition to update the crop recovery assessment.'}
               </p>
 
               <div className="grid grid-cols-2 gap-4 pt-2">
                 <div className="p-4 bg-white rounded-xl border border-slate-200">
-                  <span className="text-xs text-slate-500 font-semibold block mb-1">Observation Input</span>
-                  <span className="text-sm font-bold text-slate-800">Waterlogging Duration (Hours)</span>
+                  <span className="text-xs text-slate-500 font-semibold block mb-1">
+                    {isTa ? 'கள அவதானிப்பு உள்ளீடு' : 'Observation Input'}
+                  </span>
+                  <span className="text-sm font-bold text-slate-800">
+                    {isTa ? 'நீர் தேக்க கால அளவு (மணிநேரம்)' : 'Waterlogging Duration (Hours)'}
+                  </span>
                 </div>
                 <div className="p-4 bg-white rounded-xl border border-slate-200">
-                  <span className="text-xs text-slate-500 font-semibold block mb-1">Visual Damage</span>
-                  <span className="text-sm font-bold text-slate-800">Leaf Silt & Submergence</span>
+                  <span className="text-xs text-slate-500 font-semibold block mb-1">
+                    {isTa ? 'கண்கூடு சேதம்' : 'Visual Damage'}
+                  </span>
+                  <span className="text-sm font-bold text-slate-800">
+                    {isTa ? 'இலை சேறு & நீரில் மூழ்குதல்' : 'Leaf Silt & Submergence'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -1185,24 +1369,38 @@ export const LandingPage: React.FC = () => {
             <div className="lg:col-span-6">
               <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-xl space-y-6">
                 <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                  <h4 className="text-base font-bold text-slate-900">Post-Rain Recovery Pipeline</h4>
+                  <h4 className="text-base font-bold text-slate-900">
+                    {isTa ? 'மழைக்கு பிந்தைய மீட்பு செயல்முறை' : 'Post-Rain Recovery Pipeline'}
+                  </h4>
                   <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">
-                    Field-Verified Update
+                    {isTa ? 'களத்தில் சரிபார்க்கப்பட்ட புதுப்பிப்பு' : 'Field-Verified Update'}
                   </span>
                 </div>
 
                 <div className="space-y-4 text-xs font-semibold">
                   <div className="p-3 bg-slate-50 rounded-lg flex items-center justify-between">
-                    <span className="text-slate-600">Standing Water Duration</span>
-                    <span className="text-slate-900 font-bold">Recorded 24-48 Hours</span>
+                    <span className="text-slate-600">
+                      {isTa ? 'தேங்கிய நீரின் கால அளவு' : 'Standing Water Duration'}
+                    </span>
+                    <span className="text-slate-900 font-bold">
+                      {isTa ? 'பதிவு செய்யப்பட்டது: 24-48 மணிநேரம்' : 'Recorded 24-48 Hours'}
+                    </span>
                   </div>
                   <div className="p-3 bg-slate-50 rounded-lg flex items-center justify-between">
-                    <span className="text-slate-600">Visible Crop Condition</span>
-                    <span className="text-slate-900 font-bold">Mild Leaf Chlorosis</span>
+                    <span className="text-slate-600">
+                      {isTa ? 'கண்கூடு பயிர் நிலை' : 'Visible Crop Condition'}
+                    </span>
+                    <span className="text-slate-900 font-bold">
+                      {isTa ? 'லேசான இலை மஞ்சள் பூத்தல்' : 'Mild Leaf Chlorosis'}
+                    </span>
                   </div>
                   <div className="p-3 bg-emerald-900 text-white rounded-lg flex items-center justify-between">
-                    <span>Updated Recovery Potential</span>
-                    <span className="font-bold text-emerald-300">MEDIUM RECOVERY</span>
+                    <span>
+                      {isTa ? 'புதுப்பிக்கப்பட்ட மீட்பு சாத்தியம்' : 'Updated Recovery Potential'}
+                    </span>
+                    <span className="font-bold text-emerald-300">
+                      {isTa ? 'நடுத்தர மீட்பு' : 'MEDIUM RECOVERY'}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1212,42 +1410,58 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ========================================================= */}
-      {/* SECTION 12 — PROJECT CAPABILITIES */}
+      {/* SECTION 12 — PROJECT COVERAGE */}
       {/* ========================================================= */}
       <section className="py-20 md:py-24 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 mb-2 block">
-              Truthful Research Scope
+              {isTa ? 'நடைமுறை செயல்பாட்டு நோக்கம்' : 'Operational Platform Scope'}
             </span>
             <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-              Initial Project Coverage
+              {isTa ? 'தளத்தின் முதன்மை செயல்பாடுகள்' : 'Platform Capabilities & Coverage'}
             </h2>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200">
               <span className="text-4xl sm:text-5xl font-extrabold text-emerald-900 block mb-2">10</span>
-              <span className="text-sm font-bold text-slate-800 block mb-1">Crop Categories</span>
-              <span className="text-xs text-slate-500">Paddy, Maize, Sugarcane, Cotton & more</span>
+              <span className="text-sm font-bold text-slate-800 block mb-1">
+                {isTa ? 'பயிர் வகைகள்' : 'Crop Categories'}
+              </span>
+              <span className="text-xs text-slate-500">
+                {isTa ? 'நெல், மக்காச்சோளம், கரும்பு, பருத்தி மற்றும் பல' : 'Paddy, Maize, Sugarcane, Cotton & more'}
+              </span>
             </div>
 
             <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200">
               <span className="text-4xl sm:text-5xl font-extrabold text-emerald-900 block mb-2">24h / 48h</span>
-              <span className="text-sm font-bold text-slate-800 block mb-1">Analysis Windows</span>
-              <span className="text-xs text-slate-500">Short-term extreme rain evaluation</span>
+              <span className="text-sm font-bold text-slate-800 block mb-1">
+                {isTa ? 'பகுப்பாய்வு சாளரங்கள்' : 'Analysis Windows'}
+              </span>
+              <span className="text-xs text-slate-500">
+                {isTa ? 'குறுகிய கால தீவிர மழை மதிப்பீடு' : 'Short-term extreme rain evaluation'}
+              </span>
             </div>
 
             <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200">
               <span className="text-4xl sm:text-5xl font-extrabold text-emerald-900 block mb-2">3</span>
-              <span className="text-sm font-bold text-slate-800 block mb-1">Soil Data Sources</span>
-              <span className="text-xs text-slate-500">Lab, Farmer Verified & SoilGrids</span>
+              <span className="text-sm font-bold text-slate-800 block mb-1">
+                {isTa ? 'மண் தரவு ஆதாரங்கள்' : 'Soil Data Sources'}
+              </span>
+              <span className="text-xs text-slate-500">
+                {isTa ? 'ஆய்வகம், விவசாயி சரிபார்த்தது & SoilGrids' : 'Lab, Farmer Verified & SoilGrids'}
+              </span>
             </div>
 
             <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200">
               <span className="text-4xl sm:text-5xl font-extrabold text-emerald-900 block mb-2">PostGIS</span>
-              <span className="text-sm font-bold text-slate-800 block mb-1">Farm Geospatial Engine</span>
-              <span className="text-xs text-slate-500">Spatial polygon boundary storage</span>
+              <span className="text-sm font-bold text-slate-800 block mb-1">
+                {isTa ? 'புவியியல் வரைபட இயந்திரம்' : 'Farm Geospatial Engine'}
+              </span>
+              <span className="text-xs text-slate-500">
+                {isTa ? 'பலகோண எல்லை சேமிப்பு' : 'Spatial polygon boundary storage'}
+              </span>
             </div>
           </div>
         </div>
@@ -1260,10 +1474,10 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 mb-2 block">
-              Credibility & Architecture
+              {isTa ? 'நம்பகத்தன்மை & கட்டமைப்பு' : 'Credibility & Architecture'}
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">
-              Built on Open Data and Transparent Analysis
+              {isTa ? 'வெளிப்படையான தரவு மற்றும் அறிவியல் பகுப்பாய்வு' : 'Built on Open Data and Transparent Analysis'}
             </h2>
           </div>
 
@@ -1271,33 +1485,45 @@ export const LandingPage: React.FC = () => {
             {[
               {
                 title: 'Open-Meteo API',
-                desc: 'High-resolution meteorological forecast and 30-year historical climate reanalysis dataset.',
-                tag: 'Weather & Climate Source',
+                desc: isTa
+                  ? 'உயர் தெளிவுத்திறன் கொண்ட வானிலை முன்னறிவிப்பு மற்றும் 30 ஆண்டு வரலாற்று காலநிலை மறுபகுப்பாய்வு தரவுத்தொகுப்பு.'
+                  : 'High-resolution meteorological forecast and 30-year historical climate reanalysis dataset.',
+                tag: isTa ? 'வானிலை & காலநிலை ஆதாரம்' : 'Weather & Climate Source',
               },
               {
                 title: 'OpenStreetMap & Leaflet',
-                desc: 'Interactive open-source geospatial mapping and farm boundary drawing tools.',
-                tag: 'Mapping Infrastructure',
+                desc: isTa
+                  ? 'ஊடாடும் திறந்த மூல புவியியல் வரைபடம் மற்றும் பண்ணை எல்லை வரையும் கருவிகள்.'
+                  : 'Interactive open-source geospatial mapping and farm boundary drawing tools.',
+                tag: isTa ? 'வரைபட கட்டமைப்பு' : 'Mapping Infrastructure',
               },
               {
                 title: 'PostgreSQL + PostGIS',
-                desc: 'Robust spatial database supporting polygon geometry and spatial queries.',
-                tag: 'Database & GIS',
+                desc: isTa
+                  ? 'பலகோண வடிவியல் மற்றும் இடஞ்சார்ந்த வினவல்களை ஆதரிக்கும் சக்திவாய்ந்த புவியியல் தரவுத்தளம்.'
+                  : 'Robust spatial database supporting polygon geometry and spatial queries.',
+                tag: isTa ? 'தரவுத்தளம் & GIS' : 'Database & GIS',
               },
               {
                 title: 'ICAR / TNAU Data Sources',
-                desc: 'Agronomic crop stress profiles, submergence tolerances and crop calendars.',
-                tag: 'Agronomic Research',
+                desc: isTa
+                  ? 'விவசாய பயிர் அழுத்த சுயவிவரங்கள், நீரில் மூழ்குதல் சகிப்புத்தன்மை மற்றும் பயிர் காலெண்டர்கள்.'
+                  : 'Agronomic crop stress profiles, submergence tolerances and crop calendars.',
+                tag: isTa ? 'வேளாண் ஆராய்ச்சி' : 'Agronomic Research',
               },
               {
                 title: 'Machine Learning Models',
-                desc: 'Random Forest & Gradient Boosting models trained on validated agricultural target datasets.',
-                tag: 'ML Architecture',
+                desc: isTa
+                  ? 'சரிபார்க்கப்பட்ட விவசாய இலக்கு தரவுத்தொகுப்புகளில் பயிற்சி பெற்ற Random Forest & Gradient Boosting மாதிரிகள்.'
+                  : 'Random Forest & Gradient Boosting models trained on validated agricultural target datasets.',
+                tag: isTa ? 'ML கட்டமைப்பு' : 'ML Architecture',
               },
               {
                 title: 'Evidence-Based Rule Engine',
-                desc: 'Agronomic rule fallback ensuring transparent, zero-hallucination risk scoring.',
-                tag: 'Rule-Based Engine',
+                desc: isTa
+                  ? 'வெளிப்படையான, நம்பகமான அபாயக் கணிப்பை உறுதி செய்யும் வேளாண் விதிமுறை கட்டமைப்பு.'
+                  : 'Agronomic rule fallback ensuring transparent, zero-hallucination risk scoring.',
+                tag: isTa ? 'விதி சார்ந்த இயந்திரம்' : 'Rule-Based Engine',
               },
             ].map((tech, idx) => (
               <div key={idx} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-3">
@@ -1319,10 +1545,10 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 mb-2 block">
-              Questions & Answers
+              {isTa ? 'கேள்விகள் & பதில்கள்' : 'Questions & Answers'}
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">
-              Frequently Asked Questions
+              {isTa ? 'அடிக்கடி கேட்கப்படும் கேள்விகள்' : 'Frequently Asked Questions'}
             </h2>
           </div>
 
@@ -1334,7 +1560,7 @@ export const LandingPage: React.FC = () => {
               >
                 <button
                   onClick={() => toggleFaq(idx)}
-                  className="w-full text-left p-6 font-bold text-base sm:text-lg text-slate-900 flex items-center justify-between focus:outline-none"
+                  className="w-full text-left p-6 font-bold text-base sm:text-lg text-slate-900 flex items-center justify-between focus:outline-none cursor-pointer"
                 >
                   <span>{faq.q}</span>
                   {openFaq === idx ? (
@@ -1360,11 +1586,13 @@ export const LandingPage: React.FC = () => {
       <section className="py-24 bg-[#07261c] text-white relative overflow-hidden">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 relative z-10">
           <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
-            Prepare Before the Rain Reaches the Field.
+            {isTa ? 'மழை வயலை அடையும் முன்பே தயாராகுங்கள்.' : 'Prepare Before the Rain Reaches the Field.'}
           </h2>
 
           <p className="text-lg text-emerald-100/90 max-w-2xl mx-auto font-light leading-relaxed">
-            Map your farm, add your crop and understand how upcoming rainfall may affect it.
+            {isTa
+              ? 'உங்கள் பண்ணையை வரைபடத்தில் குறிக்கவும், பயிரைச் சேர்க்கவும், வரவிருக்கும் மழை எவ்வாறு பாதிக்கும் என்பதை முன்கூட்டியே அறியவும்.'
+              : 'Map your farm, add your crop and understand how upcoming rainfall may affect it.'}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4 pt-4">
@@ -1372,14 +1600,14 @@ export const LandingPage: React.FC = () => {
               to={isAuthenticated ? '/dashboard' : '/register'}
               className="w-full sm:w-auto px-9 py-4 bg-white text-slate-900 hover:bg-slate-100 font-bold rounded-xl shadow-xl transition-all text-base"
             >
-              Get Started
+              {isTa ? 'இப்போதே தொடங்குக' : 'Get Started'}
             </Link>
             {!isAuthenticated && (
               <Link
                 to="/login"
                 className="w-full sm:w-auto px-9 py-4 bg-transparent border border-emerald-500/50 hover:bg-emerald-900 text-white font-semibold rounded-xl transition-colors text-base"
               >
-                Login
+                {isTa ? 'உள்நுழைக' : 'Login'}
               </Link>
             )}
           </div>
@@ -1401,48 +1629,63 @@ export const LandingPage: React.FC = () => {
                 <span className="text-xl font-bold text-white tracking-tight">CropClimate AI</span>
               </div>
               <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
-                An MSc research project exploring farm-specific crop impact analysis under extreme rainfall
-                and changing climate conditions.
+                {isTa
+                  ? 'தீவிர மழை மற்றும் மாறிவரும் காலநிலை சூழலில் பண்ணை சார்ந்த பயிர் பாதிப்பை பகுப்பாய்வு செய்யும் மேம்பட்ட வேளாண் நுண்ணறிவு தளம்.'
+                  : 'An advanced agricultural intelligence platform providing farm-specific crop impact analysis under extreme rainfall and changing climate conditions.'}
               </p>
             </div>
 
             {/* Project Column */}
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-4">PROJECT</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-4">
+                {isTa ? 'திட்டம்' : 'PROJECT'}
+              </h4>
               <ul className="space-y-2.5 text-xs text-slate-400">
-                <li><a href="#hero" className="hover:text-white transition-colors">Home</a></li>
-                <li><a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a></li>
-                <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#climate-insights" className="hover:text-white transition-colors">Climate Analysis</a></li>
+                <li><a href="#hero" className="hover:text-white transition-colors">{isTa ? 'முகப்பு' : 'Home'}</a></li>
+                <li><a href="#how-it-works" className="hover:text-white transition-colors">{isTa ? 'செயல்படும் முறை' : 'How It Works'}</a></li>
+                <li><a href="#features" className="hover:text-white transition-colors">{isTa ? 'அம்சங்கள்' : 'Features'}</a></li>
+                <li><a href="#climate-insights" className="hover:text-white transition-colors">{isTa ? 'காலநிலை பகுப்பாய்வு' : 'Climate Analysis'}</a></li>
               </ul>
             </div>
 
             {/* Application Column */}
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-4">APPLICATION</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-4">
+                {isTa ? 'செயலி' : 'APPLICATION'}
+              </h4>
               <ul className="space-y-2.5 text-xs text-slate-400">
-                <li><Link to="/login" className="hover:text-white transition-colors">Login</Link></li>
-                <li><Link to="/register" className="hover:text-white transition-colors">Register</Link></li>
-                <li><Link to={isAuthenticated ? "/dashboard" : "/login"} className="hover:text-white transition-colors">Dashboard</Link></li>
-                <li><Link to={isAuthenticated ? "/farms" : "/login"} className="hover:text-white transition-colors">My Farms</Link></li>
+                <li><Link to="/login" className="hover:text-white transition-colors">{isTa ? 'உள்நுழைக' : 'Login'}</Link></li>
+                <li><Link to="/register" className="hover:text-white transition-colors">{isTa ? 'பதிவு செய்க' : 'Register'}</Link></li>
+                <li><Link to={isAuthenticated ? "/dashboard" : "/login"} className="hover:text-white transition-colors">{isTa ? 'முகப்புப் பலகை' : 'Dashboard'}</Link></li>
+                <li><Link to={isAuthenticated ? "/farms" : "/login"} className="hover:text-white transition-colors">{isTa ? 'என் பண்ணைகள்' : 'My Farms'}</Link></li>
               </ul>
             </div>
 
-            {/* Research & Legal Column */}
+            {/* Scientific & Legal Column */}
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-4">RESEARCH & LEGAL</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-4">
+                {isTa ? 'அறிவியல் & சட்டப்பூர்வம்' : 'SCIENTIFIC & LEGAL'}
+              </h4>
               <ul className="space-y-2.5 text-xs text-slate-400">
-                <li><a href="#about" className="hover:text-white transition-colors">Methodology</a></li>
-                <li><a href="#about" className="hover:text-white transition-colors">Data Sources</a></li>
-                <li><a href="#about" className="hover:text-white transition-colors">Model Information</a></li>
-                <li><a href="#faq" className="hover:text-white transition-colors">Project Limitations</a></li>
+                <li><a href="#about" className="hover:text-white transition-colors">{isTa ? 'கோட்பாடுகள்' : 'Methodology'}</a></li>
+                <li><a href="#about" className="hover:text-white transition-colors">{isTa ? 'தரவு ஆதாரங்கள்' : 'Data Sources'}</a></li>
+                <li><a href="#about" className="hover:text-white transition-colors">{isTa ? 'மாதிரி விவரங்கள்' : 'Model Information'}</a></li>
+                <li><a href="#faq" className="hover:text-white transition-colors">{isTa ? 'வரம்புகள்' : 'Project Limitations'}</a></li>
               </ul>
             </div>
           </div>
 
           <div className="pt-8 border-t border-emerald-950 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
-            <p>© 2026 CropClimate AI — MSc Research Project</p>
-            <p className="mt-2 sm:mt-0">Decision-Support Architecture for Extreme Weather Events</p>
+            <p>
+              {isTa
+                ? '© 2026 CropClimate AI — காலநிலை சார்ந்த வேளாண் நுண்ணறிவு தளம்'
+                : '© 2026 CropClimate AI — Climate-Smart Agriculture Platform'}
+            </p>
+            <p className="mt-2 sm:mt-0">
+              {isTa
+                ? 'தீவிர வானிலை நிகழ்வுகளுக்கான விவசாய முடிவெடுக்கும் கட்டமைப்பு'
+                : 'Decision-Support Architecture for Extreme Weather Events'}
+            </p>
           </div>
         </div>
       </footer>
